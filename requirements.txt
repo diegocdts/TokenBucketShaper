@@ -1,0 +1,7 @@
+simpy
+pandas
+numpy
+matplotlib
+scipy
+tensorflow
+tensorflow_probability

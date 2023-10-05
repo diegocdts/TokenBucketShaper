@@ -4,24 +4,24 @@
 
 --seed: Semente para números aleatórios.
 
---flows: Especifica o número total de fluxos (padrão: 10).
+--flows: Especifica o número total de fluxos
 
---lambda_param: Parâmetro lambda para os valores aleatórios de distribuição exponencial (padrão: 1000).
+--lambda_param: Parâmetro lambda para os valores aleatórios de distribuição exponencial
 
---tokens: Especifica o número de tokens a serem criados por segundo (padrão: 128000 bytes).
+--tokens: Especifica o número de tokens a serem criados por segundo (cada byte consome um token)
 
---bucket_capacity: Especifica a capacidade máxima do bucket (padrão: 12800 bytes).
+--bucket_capacity: Especifica a capacidade máxima do bucket (em bytes)
 
---max_queue_occupancy: Especifica o tamanho máximo da fila de transmissão em bytes (padrão: 999999999999999999999999 bytes).
+--max_queue_occupancy: Especifica o tamanho máximo da fila de transmissão
 
 --delay_sla: Especifica o atraso máximo permitido (padrão: 0.01s).
 
---max_time: Especifica o tempo máximo de execução do programa em segundos (padrão: 2000 segundos).
+--max_time: Especifica o tempo máximo de execução do programa em segundos (padrão: 300 segundos).
 
---mtu: Maximum Transmission Unit (padrão: 128 bytes).
+--mtu: Maximum Transmission Unit (padrão: 1 byte)
 
 --rate_percentage: Percentual da taxa calculada de transmissão a ser usada (padrão: 100%).
 
 --sampling_interval: Intervalo de amostragem (padrão: 0.001s).
 
---sampling_window: Janela de tempo para criar novo conjunto de arquivos de amostras (padrão: 200s)
+--sampling_window: Janela de tempo para criar novo conjunto de arquivos de amostras (padrão: 60 segundos)

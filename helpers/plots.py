@@ -129,12 +129,8 @@ def cdf(data, file_name, metric):
 
 def histogram(data, file_name, metric):
     plt.figure(figsize=(10, 6))
-    if metric == Metric.latency:
-        num_bins = bins_for_latency(data)
-        hist, bins = np.histogram(data, bins=num_bins, density=True)
-    else:
-        num_bins = int(max(data)+1)
-        hist, bins = np.histogram(data, bins=num_bins, density=True)
+    num_bins = 25
+    hist, bins = np.histogram(data, bins=num_bins, density=True)
     percentual_frequency = hist / np.sum(hist) * 100
 
     plt.bar(bins[:-1], percentual_frequency, width=(bins[1] - bins[0]), alpha=0.7, color='blue', label=file_name)
@@ -150,14 +146,6 @@ def histogram(data, file_name, metric):
 
     plt.savefig(f'{OutputPath.histogram}/{file_name}_{metric}.png')
     plt.close()
-
-
-def bins_for_latency(data):
-    max_latency_str = str(max(data)).replace('.', '')
-    for char in max_latency_str:
-        if char != '0':
-            return int(char) + 1
-    return 10
 
 
 def full_histogram(file_name: str):

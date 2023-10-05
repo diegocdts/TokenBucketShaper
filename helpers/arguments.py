@@ -7,7 +7,7 @@ def arguments():
 
     parser.add_argument('--seed',
                         type=int,
-                        default=123,
+                        default=1,
                         help='Seed for random values')
 
     parser.add_argument('--flows',
@@ -22,12 +22,12 @@ def arguments():
 
     parser.add_argument('--tokens',
                         type=int,
-                        default=12800,
+                        default=100,
                         help='Number of tokens to be created per second')
 
     parser.add_argument('--bucket_capacity',
                         type=int,
-                        default=12800,
+                        default=100,
                         help='Max capacity of the bucket (also burst size) in bytes')
 
     parser.add_argument('--queue_capacity',
@@ -47,7 +47,7 @@ def arguments():
 
     parser.add_argument('--mtu',
                         type=int,
-                        default=128,
+                        default=1,
                         help='Maximum Transmission Unit')
 
     parser.add_argument('--rate_percentage',

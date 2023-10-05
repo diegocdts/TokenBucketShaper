@@ -11,8 +11,8 @@ class TokenBucket:
 
         self.shaper = []
         self.shaper_occupancy = 0
-        self.max_shaper_occupancy = tokens_per_second
-        self.max_occupancy_observed = 0
+        self.shaper_capacity = tokens_per_second
+        self.max_shaper_occupancy = 0
 
         self.is_emptying_shaper = False
 
@@ -29,7 +29,6 @@ class TokenBucket:
             self.is_emptying_shaper = True
             packet = self.shaper.pop(0)
             self.forward(packet)
-            self.shaper_occupancy -= packet.size
         else:
             self.is_emptying_shaper = False
 
@@ -40,11 +39,10 @@ class TokenBucket:
             self.forward(packet)
 
     def shaping(self, packet):
-        if self.max_shaper_occupancy - self.shaper_occupancy >= packet.size:
+        if self.shaper_capacity - len(self.shaper) >= packet.size:
             self.shaper.append(packet)
-            self.shaper_occupancy += packet.size
-            if self.shaper_occupancy > self.max_occupancy_observed:
-                self.max_occupancy_observed = self.shaper_occupancy
+            if len(self.shaper) > self.max_shaper_occupancy:
+                self.max_shaper_occupancy = len(self.shaper)
 
     def forward(self, packet):
         self.bucket -= packet.size

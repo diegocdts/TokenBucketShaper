@@ -76,12 +76,12 @@ def export_plot_rates(args, rates_list: np.array):
 
     plt.figure(figsize=(10, 6))
     x = np.linspace(1, len(rates_list), len(rates_list))
-    y = [rate/(1000 ** 3) for rate in rates_list]
+    y = [rate for rate in rates_list]
     plt.plot(x, y, label=file_name)
 
     plt.xticks(x, x)
     plt.xlabel('Iteration')
-    plt.ylabel('Transmission rate (GBps)')
+    plt.ylabel('Transmission rate (Bytes per sec)')
     plt.legend(loc=5)
 
     plt.savefig(f'{path}.png')
@@ -89,7 +89,7 @@ def export_plot_rates(args, rates_list: np.array):
 
 
 def token_buckets_shaper_occupation(token_buckets, file_name):
-    occupations = sorted([tb.max_occupancy_observed for tb in token_buckets])
+    occupations = sorted([tb.max_shaper_occupancy for tb in token_buckets])
     shapers = list(range(1, len(occupations)+1))
 
     if max(occupations) > 0:
@@ -129,15 +129,17 @@ def cdf(data, file_name, metric):
 
 def histogram(data, file_name, metric):
     plt.figure(figsize=(10, 6))
-    num_bins = 25
-    hist, bins = np.histogram(data, bins=num_bins, density=True)
-    percentual_frequency = hist / np.sum(hist) * 100
+    if metric == Metric.latency:
+        num_bins = bins_for_latency(data)
+    else:
+        num_bins = np.arange(min(data), max(data) + 2) - 0.5
 
-    plt.bar(bins[:-1], percentual_frequency, width=(bins[1] - bins[0]), alpha=0.7, color='blue', label=file_name)
+    hist, bins, patches = plt.hist(data, bins=num_bins, weights=np.ones(len(data)) / len(data) * 100, label=file_name)
 
-    for i, freq in enumerate(percentual_frequency):
+    delta = (bins[1] - bins[0]) / 2
+    for i, freq in enumerate(hist):
         if freq > 0:
-            plt.text(bins[i], freq + 1, f'{freq:.2f}%', ha='center', va='bottom', fontsize=10)
+            plt.text(bins[i] + delta, freq + 1, f'{freq:.2f}%', ha='center', va='bottom', fontsize=10, rotation=90)
 
     plt.legend(loc=5)
 
@@ -146,6 +148,14 @@ def histogram(data, file_name, metric):
 
     plt.savefig(f'{OutputPath.histogram}/{file_name}_{metric}.png')
     plt.close()
+
+
+def bins_for_latency(data):
+    max_latency_str = str(max(data)).replace('.', '')
+    for char in max_latency_str:
+        if char != '0':
+            return int(char) + 1
+    return 10
 
 
 def full_histogram(file_name: str):

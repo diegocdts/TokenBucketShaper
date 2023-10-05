@@ -26,11 +26,11 @@ if __name__ == "__main__":
     # plot results
     env.process(plot_results(env, args, transmission_queue, token_buckets))
 
-    # samples information from transmission_queue
-    env.process(sampling_transmission_queue(env, args.sampling_interval, transmission_queue))
-
     # process log
     env.process(show_log(env, args.sampling_interval, transmission_queue, token_buckets))
+
+    # samples information from transmission_queue
+    env.process(sampling_transmission_queue(env, args.sampling_interval, transmission_queue))
 
     env.run(until=args.max_time)
 

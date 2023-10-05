@@ -54,7 +54,7 @@ def get_transmission_queue(args, env):
     transmission_queue = TransmissionQueue(env=env,
                                            rate=new_rate,
                                            mtu=args.mtu,
-                                           max_queue_occupancy=args.max_queue_occupancy,
+                                           queue_capacity=args.queue_capacity,
                                            file_name=file_name)
 
     export_plot_rates(args, rates_list)
@@ -108,9 +108,9 @@ def plot_results(env, args, transmission_queue, token_buckets):
 def sampling_transmission_queue(env, sampling_interval, transmission_queue):
     while True:
         yield env.timeout(sampling_interval)
-        occupancy = transmission_queue.queue_occupancy
+        occupancy = transmission_queue.max_queue_occupancy
         latencies = transmission_queue.latencies
-        transmission_queue.latencies = []
+        transmission_queue.restart_samplers()
         samplings_as_csv(transmission_queue.file_name, occupancy, latencies)
 
 
@@ -118,5 +118,5 @@ def show_log(env, sampling_interval, transmission_queue, token_buckets):
     while True:
         yield env.timeout(sampling_interval)
         tb_emptying_shaper = len([tb for tb in token_buckets if tb.is_emptying_shaper])
-        log(env.now, transmission_queue.queue_occupancy, transmission_queue.received, transmission_queue.forwarded,
+        log(env.now, transmission_queue.max_queue_occupancy, transmission_queue.received, transmission_queue.forwarded,
             tb_emptying_shaper)

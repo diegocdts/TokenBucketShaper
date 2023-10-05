@@ -22,7 +22,7 @@ def arguments():
 
     parser.add_argument('--tokens',
                         type=int,
-                        default=128000,
+                        default=12800,
                         help='Number of tokens to be created per second')
 
     parser.add_argument('--bucket_capacity',
@@ -30,7 +30,7 @@ def arguments():
                         default=12800,
                         help='Max capacity of the bucket (also burst size) in bytes')
 
-    parser.add_argument('--max_queue_occupancy',
+    parser.add_argument('--queue_capacity',
                         type=int,
                         default=999999999999999999999999,
                         help='Max capacity of the queue in bytes')
@@ -42,7 +42,7 @@ def arguments():
 
     parser.add_argument('--max_time',
                         type=float,
-                        default=2000,
+                        default=300,
                         help='Maximum program execution time (in seconds)')
 
     parser.add_argument('--mtu',
@@ -62,7 +62,7 @@ def arguments():
 
     parser.add_argument('--sampling_window',
                         type=float,
-                        default=200,
+                        default=60,
                         help='Window to create a new set of sampling files')
 
     return parser.parse_args()

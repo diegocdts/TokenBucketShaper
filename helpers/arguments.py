@@ -57,7 +57,7 @@ def arguments():
 
     parser.add_argument('--sampling_interval',
                         type=float,
-                        default=0.001,
+                        default=0.01,
                         help='The sampling interval')
 
     parser.add_argument('--sampling_window',

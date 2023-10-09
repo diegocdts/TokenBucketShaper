@@ -139,7 +139,12 @@ def histogram(data, file_name, metric):
     delta = (bins[1] - bins[0]) / 2
     for i, freq in enumerate(hist):
         if freq > 0:
-            plt.text(bins[i] + delta, freq + 1, f'{freq:.2f}%', ha='center', va='bottom', fontsize=10, rotation=90)
+            absolute = max(1, int(freq * len(data) / 100))
+            absolute_str = f' ({absolute})'
+            if freq > 90:
+                absolute_str = f'\n({absolute})'
+            plt.text(bins[i] + delta, freq + 1, f'{freq:.2f}%{absolute_str}', ha='center', va='bottom', fontsize=10,
+                     rotation=90)
 
     plt.legend(loc=5)
 

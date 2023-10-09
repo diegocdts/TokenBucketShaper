@@ -29,11 +29,11 @@ class TransmissionQueue:
     def un_queuing(self):
         while self.queue:
             packet = self.queue.pop(0)
-            self.prepare_to_forward(packet)
             yield self.env.timeout(packet.size / self.rate)
+            self.set_packet_latency(packet)
             self.forwarded += 1
 
-    def prepare_to_forward(self, packet):
+    def set_packet_latency(self, packet):
         packet.left_queue_at = self.env.now
         self.latencies.append(packet.queue_latency())
 

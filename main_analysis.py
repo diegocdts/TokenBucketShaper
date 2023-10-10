@@ -13,4 +13,4 @@ def run(file_name, metric):
     visualization.histogram(best, True)
 
 
-run('flows_50|y_100.0|rho_125B|sigma_5B|SLA_0.01s|rate_25.26KBps', Metric.occupancy)
+run('flows_50|y_100|rho_6.40KB|sigma_1.28KB|SLA_0.01s|rate_6.42MBps', Metric.occupancy)

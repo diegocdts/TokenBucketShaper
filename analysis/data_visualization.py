@@ -23,15 +23,12 @@ class Visualization:
         if self.metric == Metric.latency:
             num_bins = self.bins_for_latency()
         else:
-            num_bins = len(np.unique(self.data))
+            num_bins = np.arange(min(self.data), max(self.data) + 2) - 0.5
 
         if distribution.name == 'lognorm' or 'rayleigh':
             self.data = self.data + 0.001
 
-        hist, bins = np.histogram(self.data, bins=num_bins, density=True)
-        percentual_frequency = hist / np.sum(hist) * 100
-        bins = np.unique(bins.astype(int))
-        plt.bar(bins, percentual_frequency, width=(bins[1] - bins[0]), alpha=0.7, color='blue')
+        plt.hist(self.data, bins=num_bins, weights=np.ones(len(self.data)) / len(self.data) * 100)
 
         if plot_distribution_curve:
             params = distribution.fit(self.data)

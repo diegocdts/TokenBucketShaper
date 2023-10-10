@@ -15,19 +15,17 @@ class Packet:
 
 
 class Flow:
-    def __init__(self, env, num_flows, lambda_param, mtu, token_buckets):
+    def __init__(self, env, lambda_param, mtu, token_bucket):
         self.env = env
-        self.num_flows = num_flows
-        self.lambda_param = lambda_param * num_flows
+        self.lambda_param = lambda_param
         self.mtu = mtu
-        self.token_buckets = token_buckets
+        self.token_bucket = token_bucket
         self.action = env.process(self.send_burst())
 
     def send_burst(self):
         while True:
-            flow = random.randint(0, self.num_flows - 1)
             inter_packet_interval = random.expovariate(self.lambda_param)
             yield self.env.timeout(inter_packet_interval)
 
-            packet = Packet(flow=flow, size=self.mtu, now=self.env.now)
-            self.token_buckets[flow].handle_packet(packet)
+            packet = Packet(flow=None, size=self.mtu, now=self.env.now)
+            self.token_bucket.handle_packet(packet)

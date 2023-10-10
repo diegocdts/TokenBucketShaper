@@ -11,14 +11,16 @@ def instances(args, env):
 
     transmission_queue = get_transmission_queue(args, env)
     token_buckets = get_token_buckets(args, env, transmission_queue)
+    flows = []
 
-    flow = Flow(env=env,
-                num_flows=args.flows,
-                lambda_param=args.lambda_param,
-                mtu=args.mtu,
-                token_buckets=token_buckets)
+    for token_bucket in token_buckets:
+        flow = Flow(env=env,
+                    lambda_param=args.lambda_param,
+                    mtu=args.mtu,
+                    token_bucket=token_bucket)
+        flows.append(flow)
 
-    return flow, token_buckets, transmission_queue
+    return flows, token_buckets, transmission_queue
 
 
 def get_token_buckets(args, env, transmission_queue):

@@ -139,11 +139,11 @@ def histogram(data, file_name, metric):
     delta = (bins[1] - bins[0]) / 2
     for i, freq in enumerate(hist):
         if freq > 0:
-            absolute = max(1, int(freq * len(data) / 100))
+            absolute = round(freq * len(data) / 100)
             absolute_str = f' ({absolute})'
-            if freq > 90:
+            if freq > 90 or len(hist) < 10:
                 absolute_str = f'\n({absolute})'
-            plt.text(bins[i] + delta, freq + 1, f'{freq:.2f}%{absolute_str}', ha='center', va='bottom', fontsize=10,
+            plt.text(bins[i] + delta, freq + 1, f'{freq:.4f}%{absolute_str}', ha='center', va='bottom', fontsize=10,
                      rotation=90)
 
     plt.legend(loc=5)
@@ -167,8 +167,8 @@ def full_histogram(file_name: str):
     end_index = file_name.find('[')
     file_prefix = file_name[:end_index]
 
-    roots = [f'{OutputPath.occupancy}', f'{OutputPath.latency}']
-    metrics = [f'{Metric.occupancy}', f'{Metric.latency}']
+    roots = [OutputPath.occupancy, OutputPath.latency]
+    metrics = [Metric.occupancy, Metric.latency]
     for root, metric in zip(roots, metrics):
         files = os.listdir(f'{root}/{file_prefix}')
         files = [file for file in files if file.endswith('.csv')]

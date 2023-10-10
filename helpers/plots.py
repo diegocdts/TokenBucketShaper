@@ -143,7 +143,7 @@ def histogram(data, file_name, metric):
         if freq > 0:
             absolute = round(freq * len(data) / 100)
             absolute_str = f' ({absolute})'
-            if freq > 90 or len(hist) < 10:
+            if freq > 50 or len(hist) < 10:
                 absolute_str = f'\n({absolute})'
             plt.text(bins[i] + delta, freq + text_height, f'{freq:.4f}%{absolute_str}', ha='center', va='bottom', fontsize=10,
                      rotation=90)

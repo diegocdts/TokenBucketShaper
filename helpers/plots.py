@@ -131,12 +131,15 @@ def histogram(data, file_name, metric):
     plt.figure(figsize=(10, 6))
     if metric == Metric.latency:
         num_bins = bins_for_latency(data)
-        text_height = -2
+        text_height = -0.01
     else:
         num_bins = np.arange(min(data), max(data) + 2) - 0.5
         text_height = 1
 
     hist, bins, patches = plt.hist(data, bins=num_bins, weights=np.ones(len(data)) / len(data) * 100, label=file_name)
+
+    if metric == Metric.latency:
+        plt.ylim(min(hist) - 0.02, max(hist) + 0.02)
 
     delta = (bins[1] - bins[0]) / 2
     for i, freq in enumerate(hist):
@@ -148,7 +151,7 @@ def histogram(data, file_name, metric):
             plt.text(bins[i] + delta, freq + text_height, f'{freq:.4f}%{absolute_str}', ha='center', va='bottom', fontsize=10,
                      rotation=90)
 
-    plt.legend(loc=5)
+    plt.legend(loc=1)
 
     plt.xlabel(metric)
     plt.ylabel('Frequency (%)')

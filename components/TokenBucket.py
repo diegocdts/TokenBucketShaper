@@ -25,12 +25,11 @@ class TokenBucket:
             yield self.env.timeout(self.mtu / self.tokens_per_second)
 
     def empty_shaper(self):
-        if self.shaper and self.bucket >= self.shaper[0].size:
+        while self.shaper and self.bucket >= self.shaper[0].size:
             self.is_emptying_shaper = True
             packet = self.shaper.pop(0)
             self.forward(packet)
-        else:
-            self.is_emptying_shaper = False
+        self.is_emptying_shaper = False
 
     def handle_packet(self, packet):
         if self.shaper or self.bucket < packet.size:

@@ -20,12 +20,12 @@ def arguments():
                         default=100,
                         help='The lambda parameter for the expovariate random time inter packets')
 
-    parser.add_argument('--tokens',
+    parser.add_argument('--rho',
                         type=int,
                         default=100,
                         help='Number of tokens to be created per second')
 
-    parser.add_argument('--bucket_capacity',
+    parser.add_argument('--sigma',
                         type=int,
                         default=100,
                         help='Max capacity of the bucket (also burst size) in bytes')

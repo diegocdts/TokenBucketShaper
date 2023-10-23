@@ -55,8 +55,8 @@ def build_file_name(args, begin_window, rate):
     """
     path = (f'flows_{args.flows}|'
             f'y_{args.lambda_param}|'
-            f'rho_{format_bytes(args.tokens)}|'
-            f'sigma_{format_bytes(args.bucket_capacity)}|'
+            f'rho_{format_bytes(args.rho)}|'
+            f'sigma_{format_bytes(args.sigma)}|'
             f'SLA_{args.delay_sla}s|'
             f'rate_{format_bytes(rate)}ps')
     file = f'[{begin_window}s-{begin_window + args.sampling_window}s]'
@@ -66,8 +66,8 @@ def build_file_name(args, begin_window, rate):
 
 def build_rate_file_name(args):
     return (f'flows_{args.flows}|'
-            f'rho_{format_bytes(args.tokens)}|'
-            f'sigma_{format_bytes(args.bucket_capacity)}|'
+            f'rho_{format_bytes(args.rho)}|'
+            f'sigma_{format_bytes(args.sigma)}|'
             f'SLA_{args.delay_sla}s|')
 
 

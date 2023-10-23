@@ -30,8 +30,8 @@ def get_token_buckets(args, env, transmission_queue):
         token_bucket = TokenBucket(env=env,
                                    identifier=f'TB_{index}',
                                    mtu=args.mtu,
-                                   tokens_per_second=args.tokens,
-                                   bucket_capacity=args.bucket_capacity,
+                                   tokens_per_second=args.rho,
+                                   bucket_capacity=args.sigma,
                                    transmission_queue=transmission_queue)
         token_buckets_list.append(token_bucket)
 
@@ -76,8 +76,8 @@ def net_calc_4_rate(args, current_rate=None):
     else:
         fixed_latency = 0.0
     flows = args.flows
-    rho = np.full(flows, args.tokens)
-    sigma = np.full(flows, args.bucket_capacity)
+    rho = np.full(flows, args.rho)
+    sigma = np.full(flows, args.sigma)
 
     foi = 0  # foi = flow of interest
     s = sigma[foi]  # s = foi burst

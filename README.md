@@ -8,9 +8,9 @@
 
 --lambda_param: Parâmetro lambda para os valores aleatórios de distribuição exponencial
 
---tokens: Especifica o número de tokens a serem criados por segundo (cada byte consome um token)
+--rho: Especifica o número de tokens a serem criados por segundo (cada byte consome um token)
 
---bucket_capacity: Especifica a capacidade máxima do bucket (em bytes)
+--sigma: Especifica a capacidade máxima do bucket (em bytes)
 
 --max_queue_occupancy: Especifica o tamanho máximo da fila de transmissão
 

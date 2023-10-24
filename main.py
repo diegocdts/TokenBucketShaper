@@ -4,7 +4,8 @@ import time
 import simpy
 
 from helpers.arguments import arguments
-from helpers.functions import sampling_transmission_queue, instances, show_log, plot_results
+from helpers.functions import sampling_transmission_queue, show_log, plot_results, get_transmission_queue, \
+    get_token_buckets, get_flows
 from helpers.outputs import create_base_output_paths
 from helpers.plots import samplings_as_png, token_buckets_shaper_occupation, full_histogram
 
@@ -21,7 +22,9 @@ if __name__ == "__main__":
     create_base_output_paths()
 
     # instantiates the token_buckets and flows lists and the transmission queue using the parsed arguments
-    flows, token_buckets, transmission_queue = instances(args, env)
+    transmission_queue = get_transmission_queue(args, env)
+    token_buckets = get_token_buckets(args, env, transmission_queue)
+    flows = get_flows(args, env, token_buckets)
 
     # plot results
     env.process(plot_results(env, args, transmission_queue, token_buckets))

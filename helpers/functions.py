@@ -7,10 +7,7 @@ from helpers.outputs import build_file_name
 from helpers.plots import export_plot_rates, samplings_as_csv, log, token_buckets_shaper_occupation, samplings_as_png
 
 
-def instances(args, env):
-
-    transmission_queue = get_transmission_queue(args, env)
-    token_buckets = get_token_buckets(args, env, transmission_queue)
+def get_flows(args, env, token_buckets):
     flows = []
 
     for token_bucket in token_buckets:
@@ -20,7 +17,7 @@ def instances(args, env):
                     token_bucket=token_bucket)
         flows.append(flow)
 
-    return flows, token_buckets, transmission_queue
+    return flows
 
 
 def get_token_buckets(args, env, transmission_queue):

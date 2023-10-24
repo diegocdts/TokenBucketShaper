@@ -23,8 +23,8 @@ def arguments():
     parser.add_argument('--rho',
                         type=int,
                         default=100,
-                        help='Number of packets that can be sent each second. This value will be multiplied by mtu '
-                             'since 1 byte consumes 1 token')
+                        help='Number of packets equivalent to the number of tokens generated per second. This value '
+                             'will be multiplied by mtu, as 1 byte consumes 1 token.')
 
     parser.add_argument('--sigma',
                         type=int,

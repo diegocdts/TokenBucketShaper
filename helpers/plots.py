@@ -138,18 +138,14 @@ def histogram(data, file_name, metric):
 
     hist, bins, patches = plt.hist(data, bins=num_bins, weights=np.ones(len(data)) / len(data) * 100, label=file_name)
 
-    if metric == Metric.latency:
-        plt.ylim(min(hist) - 0.02, max(hist) + 0.02)
+    plt.ylim(min(hist) - 1, max(hist) + 1)
 
     delta = (bins[1] - bins[0]) / 2
     for i, freq in enumerate(hist):
         if freq > 0:
             absolute = round(freq * len(data) / 100)
             absolute_str = f' ({absolute})'
-            if freq > 1:
-                height = freq / 2
-            else:
-                height = 1
+            height = min(hist) + 1
             plt.text(bins[i] + delta, height, f'{freq:.4f}%{absolute_str}', ha='center', va='bottom', fontsize=10,
                      rotation=90)
 

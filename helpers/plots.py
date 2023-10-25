@@ -7,10 +7,11 @@ import matplotlib.pyplot as plt
 from helpers.outputs import Metric, build_rate_file_name, OutputPath
 
 
-def log(timestamp, occupancy, received, forwarded, buckets_status):
+def log(timestamp, occupancy, biggest_burst, received, forwarded, buckets_status):
     space = '  -  '
     message = (f'timestamp: {timestamp:.4f}{space}'
                f'occupancy: {occupancy} packets{space}'
+               f'biggest burst: {biggest_burst} packets{space}'
                f'packets received: {received}{space}'
                f'packets forwarded: {forwarded}{space}\n'
                f'buckets status: {buckets_status}\n')

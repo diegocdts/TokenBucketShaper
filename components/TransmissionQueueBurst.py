@@ -12,6 +12,7 @@ class TransmissionQueue:
 
         self.queue = []
         self.max_queue_occupancy = 0
+        self.biggest_burst = 0
 
         self.latencies = []
 
@@ -20,6 +21,7 @@ class TransmissionQueue:
     def queuing(self, burst):
         [packet.__setattr__('entered_queue_at', self.env.now) for packet in burst]
         self.queue += burst
+        self.update_biggest_burst(len(burst))
         self.update_max_queue_occupancy()
         self.received += 1
         if not self.action.is_alive:
@@ -42,4 +44,9 @@ class TransmissionQueue:
 
     def restart_samplers(self):
         self.max_queue_occupancy = 0
+        self.biggest_burst = 0
         self.latencies = []
+
+    def update_biggest_burst(self, burst_size):
+        if burst_size > self.biggest_burst:
+            self.biggest_burst = burst_size

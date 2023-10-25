@@ -101,7 +101,7 @@ def token_buckets_shaper_occupation(token_buckets, file_name):
         plt.legend(loc=5)
 
         plt.xlim(1, len(occupations))
-        plt.ylim(0, max(occupations) + (0.05 * max(occupations)))
+        plt.ylim(0, token_buckets[0].shaper_capacity + 1)
 
         plt.xlabel('Token bucket shaper')
         plt.ylabel('Max occupation observed')
@@ -130,13 +130,11 @@ def cdf(data, file_name, metric):
 
 
 def histogram(data, file_name, metric):
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(15, 7))
     if metric == Metric.latency:
         num_bins = bins_for_latency(data)
-        text_height = -0.01
     else:
         num_bins = np.arange(min(data), max(data) + 2) - 0.5
-        text_height = 1
 
     hist, bins, patches = plt.hist(data, bins=num_bins, weights=np.ones(len(data)) / len(data) * 100, label=file_name)
 
@@ -148,9 +146,11 @@ def histogram(data, file_name, metric):
         if freq > 0:
             absolute = round(freq * len(data) / 100)
             absolute_str = f' ({absolute})'
-            if freq > 50 or len(hist) < 10:
-                absolute_str = f'\n({absolute})'
-            plt.text(bins[i] + delta, freq + text_height, f'{freq:.4f}%{absolute_str}', ha='center', va='bottom', fontsize=10,
+            if freq > 1:
+                height = freq / 2
+            else:
+                height = 1
+            plt.text(bins[i] + delta, height, f'{freq:.4f}%{absolute_str}', ha='center', va='bottom', fontsize=10,
                      rotation=90)
 
     plt.legend(loc=1)

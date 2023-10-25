@@ -50,7 +50,7 @@ class TokenBucket:
 
         self.shaper = []
         self.shaper_occupancy = 0
-        self.shaper_capacity = int(bucket_capacity / mtu)
+        self.shaper_capacity = int(tokens_per_second / mtu)
         self.max_shaper_occupancy = 0
 
         self.is_emptying_shaper = False

@@ -15,6 +15,7 @@ class PreTokenBucket:
         self.bucket_capacity = bucket_capacity
         self.bucket = bucket_capacity
         self.shaper = []
+        self.shaper_capacity = int(bucket_capacity / mtu)
         self.action = None
 
     def new_tokens(self):
@@ -24,9 +25,10 @@ class PreTokenBucket:
             yield self.env.timeout(self.mtu / self.tokens_per_second)
 
     def shaping(self, packet):
-        self.shaper.append(packet)
-        if self.action is None:
-            self.action = self.env.process(self.new_tokens())
+        if self.shaper_capacity > len(self.shaper):
+            self.shaper.append(packet)
+            if self.action is None:
+                self.action = self.env.process(self.new_tokens())
 
     def send_burst(self):
         if self.shaper and self.bucket >= 0:
@@ -48,7 +50,7 @@ class TokenBucket:
 
         self.shaper = []
         self.shaper_occupancy = 0
-        self.shaper_capacity = tokens_per_second
+        self.shaper_capacity = int(bucket_capacity / mtu)
         self.max_shaper_occupancy = 0
 
         self.is_emptying_shaper = False
@@ -75,6 +77,8 @@ class TokenBucket:
         self.shaping(burst[split:])
 
     def shaping(self, burst):
+        split = self.shaper_capacity - len(self.shaper)
+        burst = burst[:split]
         self.shaper += burst
         if len(self.shaper) > self.max_shaper_occupancy:
             self.max_shaper_occupancy = len(self.shaper)

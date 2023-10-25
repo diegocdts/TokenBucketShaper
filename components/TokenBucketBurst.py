@@ -15,7 +15,7 @@ class PreTokenBucket:
         self.bucket_capacity = bucket_capacity
         self.bucket = bucket_capacity
         self.shaper = []
-        self.action = env.process(self.new_tokens())
+        self.action = None
 
     def new_tokens(self):
         while True:
@@ -25,13 +25,15 @@ class PreTokenBucket:
 
     def shaping(self, packet):
         self.shaper.append(packet)
+        if self.action is None:
+            self.action = self.env.process(self.new_tokens())
 
     def send_burst(self):
         if self.shaper and self.bucket >= 0:
             split = split_burst(self.shaper, self.bucket)
             if split > 0:
                 self.token_bucket.handle_burst(self.shaper[:split])
-            self.shaper = self.shaper[split:]
+                self.shaper = self.shaper[split:]
 
 
 class TokenBucket:
@@ -64,7 +66,7 @@ class TokenBucket:
             split = split_burst(self.shaper, self.bucket)
             if split > 0:
                 self.forward(self.shaper[:split])
-            self.shaper = self.shaper[split:]
+                self.shaper = self.shaper[split:]
 
     def handle_burst(self, burst):
         split = split_burst(burst, self.bucket)

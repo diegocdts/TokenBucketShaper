@@ -19,9 +19,9 @@ class Flow:
         self.lambda_param = lambda_param
         self.mtu = mtu
         self.token_bucket = token_bucket
-        self.action = env.process(self.send_burst())
+        self.action = env.process(self.send_packet())
 
-    def send_burst(self):
+    def send_packet(self):
         while True:
             inter_packet_interval = random.expovariate(self.lambda_param)
             yield self.env.timeout(inter_packet_interval)

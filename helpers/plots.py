@@ -91,6 +91,7 @@ def export_plot_rates(args, rates_list: np.array):
 
 def token_buckets_shaper_occupation(token_buckets, file_name):
     occupations = sorted([tb.max_shaper_occupancy for tb in token_buckets])
+    [tb.__setattr__('max_shaper_occupancy', 0) for tb in token_buckets]
     shapers = list(range(1, len(occupations)+1))
 
     if max(occupations) > 0:

@@ -1,5 +1,7 @@
 import random
 
+from components.TokenBucketBurst import PreTokenBucket
+
 
 class Packet:
     def __init__(self, size, now):
@@ -14,11 +16,11 @@ class Packet:
 
 
 class Flow:
-    def __init__(self, env, lambda_param, mtu, tokens_per_second, token_bucket):
+    def __init__(self, env, lambda_param, mtu, tokens_per_second, bucket_capacity, token_bucket):
         self.env = env
         self.lambda_param = lambda_param
         self.mtu = mtu
-        self.pre_token_bucket = PreTokenBucket(env, mtu, tokens_per_second, token_bucket)
+        self.pre_token_bucket = PreTokenBucket(env, mtu, tokens_per_second, token_bucket, bucket_capacity)
         self.action = env.process(self.send_packet())
 
     def send_packet(self):
@@ -28,23 +30,3 @@ class Flow:
 
             packet = Packet(size=self.mtu, now=self.env.now)
             self.pre_token_bucket.shaping(packet)
-
-
-class PreTokenBucket:
-    def __init__(self, env, mtu, tokens_per_second, token_bucket):
-        self.env = env
-        self.mtu = mtu
-        self.tokens_per_second = tokens_per_second
-        self.token_bucket = token_bucket
-        self.shaper = []
-        self.action = env.process(self.send_burst())
-
-    def shaping(self, packet):
-        self.shaper.append(packet)
-
-    def send_burst(self):
-        while True:
-            burst = self.shaper
-            self.shaper = []
-            self.token_bucket.handle_burst(burst)
-            yield self.env.timeout(self.mtu / self.tokens_per_second)

@@ -6,6 +6,34 @@ def split_burst(burst, bucket):
         return len(burst)
 
 
+class PreTokenBucket:
+    def __init__(self, env, mtu, tokens_per_second, token_bucket, bucket_capacity):
+        self.env = env
+        self.mtu = mtu
+        self.tokens_per_second = tokens_per_second
+        self.token_bucket = token_bucket
+        self.bucket_capacity = bucket_capacity
+        self.bucket = bucket_capacity
+        self.shaper = []
+        self.action = env.process(self.new_tokens())
+
+    def new_tokens(self):
+        while True:
+            self.bucket = min(self.bucket + self.mtu, self.bucket_capacity)
+            self.send_burst()
+            yield self.env.timeout(self.mtu / self.tokens_per_second)
+
+    def shaping(self, packet):
+        self.shaper.append(packet)
+
+    def send_burst(self):
+        if self.shaper and self.bucket >= 0:
+            split = split_burst(self.shaper, self.bucket)
+            if split > 0:
+                self.token_bucket.handle_burst(self.shaper[:split])
+            self.shaper = self.shaper[split:]
+
+
 class TokenBucket:
     def __init__(self, env, identifier, mtu, tokens_per_second, bucket_capacity, transmission_queue):
         self.env = env
@@ -34,12 +62,14 @@ class TokenBucket:
     def empty_shaper(self):
         if self.shaper and self.bucket >= 0:
             split = split_burst(self.shaper, self.bucket)
-            self.forward(self.shaper[:split])
+            if split > 0:
+                self.forward(self.shaper[:split])
             self.shaper = self.shaper[split:]
 
     def handle_burst(self, burst):
         split = split_burst(burst, self.bucket)
-        self.forward(burst[:split])
+        if split > 0:
+            self.forward(burst[:split])
         self.shaping(burst[split:])
 
     def shaping(self, burst):

@@ -2,8 +2,7 @@ import random
 
 
 class Packet:
-    def __init__(self, flow, size, now):
-        self.flow = flow
+    def __init__(self, size, now):
         self.size = size
         self.created_at = now
         self.entered_queue_at = None
@@ -27,5 +26,5 @@ class Flow:
             inter_packet_interval = random.expovariate(self.lambda_param)
             yield self.env.timeout(inter_packet_interval)
 
-            packet = Packet(flow=None, size=self.mtu, now=self.env.now)
+            packet = Packet(size=self.mtu, now=self.env.now)
             self.token_bucket.handle_packet(packet)

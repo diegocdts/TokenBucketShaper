@@ -14,6 +14,7 @@ def get_flows(args, env, token_buckets):
         flow = Flow(env=env,
                     lambda_param=args.lambda_param,
                     mtu=args.mtu,
+                    tokens_per_second=args.rho,
                     token_bucket=token_bucket)
         flows.append(flow)
 

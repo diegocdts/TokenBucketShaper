@@ -37,6 +37,7 @@ class PreTokenBucket:
         self.tokens_per_second = tokens_per_second
         self.token_bucket = token_bucket
         self.shaper = []
+        self.action = env.process(self.send_burst())
 
     def shaping(self, packet):
         self.shaper.append(packet)

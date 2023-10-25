@@ -7,13 +7,13 @@ import matplotlib.pyplot as plt
 from helpers.outputs import Metric, build_rate_file_name, OutputPath
 
 
-def log(timestamp, occupancy, received, forwarded, tb_emptying_shaper):
+def log(timestamp, occupancy, received, forwarded, buckets_status):
     space = '  -  '
     message = (f'timestamp: {timestamp:.4f}{space}'
                f'occupancy: {occupancy} packets{space}'
                f'packets received: {received}{space}'
-               f'packets forwarded: {forwarded}{space}'
-               f'TB emptying shaper: {tb_emptying_shaper}\n')
+               f'packets forwarded: {forwarded}{space}\n'
+               f'buckets status: {buckets_status}\n')
     sys.stdout.write('\r' + message)
     sys.stdout.flush()
 

@@ -1,8 +1,8 @@
 import numpy as np
 
 from components.Flow import Flow
-from components.TokenBucket import TokenBucket
-from components.TransmissionQueue import TransmissionQueue
+from components.TokenBucketBurst import TokenBucket
+from components.TransmissionQueueBurst import TransmissionQueue
 from helpers.outputs import build_file_name
 from helpers.plots import export_plot_rates, samplings_as_csv, log, token_buckets_shaper_occupation, samplings_as_png
 
@@ -117,6 +117,6 @@ def sampling_transmission_queue(env, sampling_interval, transmission_queue):
 def show_log(env, sampling_interval, transmission_queue, token_buckets):
     while True:
         yield env.timeout(sampling_interval)
-        tb_emptying_shaper = len([tb for tb in token_buckets if tb.is_emptying_shaper])
+        buckets_status = '|'.join(str(token_bucket.bucket) for token_bucket in token_buckets)
         log(env.now, transmission_queue.max_queue_occupancy, transmission_queue.received, transmission_queue.forwarded,
-            tb_emptying_shaper)
+            buckets_status)

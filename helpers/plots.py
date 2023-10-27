@@ -133,7 +133,7 @@ def cdf(data, file_name, metric):
 def histogram(data, file_name, metric):
     plt.figure(figsize=(15, 7))
     if metric == Metric.latency:
-        num_bins = bins_for_latency(data)
+        num_bins = 15
     else:
         num_bins = np.arange(min(data), max(data) + 2) - 0.5
 
@@ -157,14 +157,6 @@ def histogram(data, file_name, metric):
 
     plt.savefig(f'{OutputPath.histogram}/{file_name}_{metric}.png')
     plt.close()
-
-
-def bins_for_latency(data):
-    max_latency_str = str(max(data)).replace('.', '')
-    for char in max_latency_str:
-        if char != '0':
-            return int(char) + 1
-    return 10
 
 
 def full_histogram(file_name: str):

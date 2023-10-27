@@ -49,11 +49,8 @@ class TokenBucket:
         self.transmission_queue = transmission_queue
 
         self.shaper = []
-        self.shaper_occupancy = 0
         self.shaper_capacity = int(tokens_per_second / mtu)
         self.max_shaper_occupancy = 0
-
-        self.is_emptying_shaper = False
 
         self.action = env.process(self.new_tokens())
 
@@ -71,17 +68,21 @@ class TokenBucket:
                 self.shaper = self.shaper[split:]
 
     def handle_burst(self, burst):
-        split = split_burst(burst, self.bucket)
-        if split > 0:
-            self.forward(burst[:split])
-        self.shaping(burst[split:])
+        if self.shaper or self.bucket == 0:
+            self.shaping(burst)
+        else:
+            split = split_burst(burst, self.bucket)
+            if split > 0:
+                self.forward(burst[:split])
+            self.shaping(burst[split:])
 
     def shaping(self, burst):
-        split = self.shaper_capacity - len(self.shaper)
-        burst = burst[:split]
-        self.shaper += burst
-        if len(self.shaper) > self.max_shaper_occupancy:
-            self.max_shaper_occupancy = len(self.shaper)
+        if burst:
+            split = self.shaper_capacity - len(self.shaper)
+            burst = burst[:split]
+            self.shaper += burst
+            if len(self.shaper) > self.max_shaper_occupancy:
+                self.max_shaper_occupancy = len(self.shaper)
 
     def forward(self, burst):
         self.bucket -= sum(packet.size for packet in burst)

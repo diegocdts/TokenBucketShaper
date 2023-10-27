@@ -10,7 +10,7 @@ from helpers.outputs import Metric, build_rate_file_name, OutputPath
 def log(timestamp, occupancy, biggest_burst, num_bursts, received, forwarded, buckets_status):
     space = '  -  '
     message = (f'timestamp: {timestamp:.4f}{space}'
-               f'occupancy: {occupancy} packets{space}'
+               f'max occupancy: {occupancy} packets{space}'
                f'biggest burst: {biggest_burst} packets{space}'
                f'num bursts: {num_bursts} packets{space}'
                f'packets received: {received}{space}'

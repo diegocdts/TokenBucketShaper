@@ -23,7 +23,7 @@ class TransmissionQueue:
         self.queue += burst
         self.update_biggest_burst(len(burst))
         self.update_max_queue_occupancy()
-        self.received += 1
+        self.received += len(burst)
         if not self.action.is_alive:
             self.action = self.env.process(self.un_queuing())
 

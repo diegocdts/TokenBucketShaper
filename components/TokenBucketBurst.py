@@ -15,7 +15,7 @@ class PreTokenBucket:
         self.bucket_capacity = bucket_capacity
         self.bucket = bucket_capacity
         self.shaper = []
-        self.shaper_capacity = int(bucket_capacity / mtu)
+        self.shaper_capacity = int(tokens_per_second / mtu)
         self.action = None
 
     def new_tokens(self):

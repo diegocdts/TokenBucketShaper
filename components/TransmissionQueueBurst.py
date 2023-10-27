@@ -13,6 +13,7 @@ class TransmissionQueue:
         self.queue = []
         self.max_queue_occupancy = 0
         self.biggest_burst = 0
+        self.num_bursts = 0
 
         self.latencies = []
 
@@ -45,8 +46,11 @@ class TransmissionQueue:
     def restart_samplers(self):
         self.max_queue_occupancy = 0
         self.biggest_burst = 0
+        self.num_bursts = 0
         self.latencies = []
 
     def update_biggest_burst(self, burst_size):
         if burst_size > self.biggest_burst:
             self.biggest_burst = burst_size
+        if burst_size > 1:
+            self.num_bursts += 1

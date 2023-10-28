@@ -16,20 +16,17 @@ class PreTokenBucket:
         self.bucket = bucket_capacity
         self.shaper = []
         self.shaper_capacity = int(tokens_per_second / mtu)
-        self.last_refill = env.now
+        self.action = self.env.process(self.new_tokens())
 
     def new_tokens(self):
-        elapsed_time = self.env.now - self.last_refill
-        tokens_to_add = elapsed_time * self.tokens_per_second
-        self.bucket = min(self.bucket + tokens_to_add, self.bucket_capacity)
-        self.last_refill = self.env.now
-        if elapsed_time >= self.mtu / self.tokens_per_second:
+        while True:
+            self.bucket = min(self.bucket + self.mtu, self.bucket_capacity)
             self.send_burst()
+            yield self.env.timeout(self.mtu / self.tokens_per_second)
 
     def shaping(self, packet):
         if self.shaper_capacity > len(self.shaper):
             self.shaper.append(packet)
-            self.new_tokens()
 
     def send_burst(self):
         if self.shaper and self.bucket >= 0:

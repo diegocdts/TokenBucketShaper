@@ -8,18 +8,14 @@ from helpers.plots import export_plot_rates, samplings_as_csv, log, token_bucket
 
 
 def get_flows(args, env, token_buckets):
-    flows = []
-
-    for token_bucket in token_buckets:
-        flow = Flow(env=env,
-                    lambda_param=args.lambda_param,
-                    mtu=args.mtu,
-                    tokens_per_second=args.rho,
-                    bucket_capacity=args.sigma,
-                    token_bucket=token_bucket)
-        flows.append(flow)
-
-    return flows
+    flow = Flow(env=env,
+                num_flows=args.flows,
+                lambda_param=args.lambda_param,
+                mtu=args.mtu,
+                tokens_per_second=args.rho,
+                bucket_capacity=args.sigma,
+                token_buckets=token_buckets)
+    return flow
 
 
 def get_token_buckets(args, env, transmission_queue):

@@ -10,19 +10,15 @@ class PreTokenBucket:
     def __init__(self, env, mtu, tokens_per_second, token_bucket, bucket_capacity):
         self.env = env
         self.mtu = mtu
-        self.tokens_per_second = tokens_per_second
         self.token_bucket = token_bucket
         self.bucket_capacity = bucket_capacity
         self.bucket = bucket_capacity
         self.shaper = []
         self.shaper_capacity = int(tokens_per_second / mtu)
-        self.action = self.env.process(self.new_tokens())
 
     def new_tokens(self):
-        while True:
-            self.bucket = min(self.bucket + self.mtu, self.bucket_capacity)
-            self.send_burst()
-            yield self.env.timeout(self.mtu / self.tokens_per_second)
+        self.bucket = min(self.bucket + self.mtu, self.bucket_capacity)
+        self.send_burst()
 
     def shaping(self, packet):
         if self.shaper_capacity > len(self.shaper):
@@ -41,7 +37,6 @@ class TokenBucket:
         self.env = env
         self.identifier = identifier
         self.mtu = mtu
-        self.tokens_per_second = tokens_per_second
         self.bucket_capacity = bucket_capacity
         self.bucket = bucket_capacity
         self.transmission_queue = transmission_queue
@@ -50,13 +45,9 @@ class TokenBucket:
         self.shaper_capacity = int(tokens_per_second / mtu)
         self.max_shaper_occupancy = 0
 
-        self.action = env.process(self.new_tokens())
-
     def new_tokens(self):
-        while True:
-            self.bucket = min(self.bucket + self.mtu, self.bucket_capacity)
-            self.empty_shaper()
-            yield self.env.timeout(self.mtu / self.tokens_per_second)
+        self.bucket = min(self.bucket + self.mtu, self.bucket_capacity)
+        self.empty_shaper()
 
     def empty_shaper(self):
         if self.shaper and self.bucket >= 0:

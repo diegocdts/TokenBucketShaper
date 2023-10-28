@@ -5,7 +5,7 @@ import simpy
 
 from helpers.arguments import arguments
 from helpers.functions import sampling_transmission_queue, show_log, plot_results, get_transmission_queue, \
-    get_token_buckets, get_flows
+    get_token_buckets, get_flows, refill_tokens
 from helpers.outputs import create_base_output_paths
 from helpers.plots import samplings_as_png, token_buckets_shaper_occupation, full_histogram
 
@@ -25,6 +25,10 @@ if __name__ == "__main__":
     transmission_queue = get_transmission_queue(args, env)
     token_buckets = get_token_buckets(args, env, transmission_queue)
     flows = get_flows(args, env, token_buckets)
+
+    # refill tokens
+    env.process(refill_tokens(env, mtu=args.mtu, tokens_per_second=args.rho, token_buckets=flows.pre_token_buckets))
+    env.process(refill_tokens(env, mtu=args.mtu, tokens_per_second=args.rho, token_buckets=token_buckets))
 
     # plot results
     env.process(plot_results(env, args, transmission_queue, token_buckets))

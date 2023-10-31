@@ -109,7 +109,7 @@ def token_buckets_shaper_occupation(token_buckets, simulation_info):
         plt.close()
 
 
-def cdf(data, scenario_name, metric, simulation_info):
+def cdf(data, scenario_name, metric, simulation_info, is_full=False):
     data = sorted(data)
     cdf_data = np.arange(1, len(data) + 1) / len(data)
 
@@ -124,7 +124,12 @@ def cdf(data, scenario_name, metric, simulation_info):
     plt.legend(loc=5)
     plt.grid(True)
 
-    plt.savefig(simulation_info.get_file_metric_path(Metric.cdf, Extension.png))
+    if is_full:
+        extra = f'Full {metric}'
+    else:
+        extra = f'{metric} - '
+
+    plt.savefig(simulation_info.get_file_metric_path(Metric.cdf, Extension.png, extra=extra))
     plt.close()
 
 
@@ -155,7 +160,7 @@ def histogram(data, scenario_name, metric, simulation_info, is_full=False):
     plt.ylabel('Frequency (%)')
 
     if is_full:
-        extra = f'Full {metric} - '
+        extra = f'Full {metric}'
     else:
         extra = f'{metric} - '
 
@@ -163,7 +168,7 @@ def histogram(data, scenario_name, metric, simulation_info, is_full=False):
     plt.close()
 
 
-def full_histogram(simulation_info):
+def full_histogram_cdf(simulation_info):
     paths = [simulation_info.get_metric_path(Metric.occupancy), simulation_info.get_metric_path(Metric.latency)]
     metrics = [Metric.occupancy, Metric.latency]
     for path, metric in zip(paths, metrics):
@@ -177,3 +182,4 @@ def full_histogram(simulation_info):
             all_data = all_data + data
 
         histogram(all_data, f'{simulation_info.scenario_name}', metric, simulation_info, is_full=True)
+        cdf(all_data, f'{simulation_info.scenario_name}', metric, simulation_info, is_full=True)

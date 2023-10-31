@@ -31,7 +31,10 @@ class SimulationInfo:
         if metric == Metric.rate:
             return f'{self.scenario_path}/{metric}/{self.rate_file_name}.{extension}'
         else:
-            return f'{self.scenario_path}/{metric}/{extra}{self.current_file_name}.{extension}'
+            if 'Full' in extra:
+                return f'{self.scenario_path}/{metric}/{extra}.{extension}'
+            else:
+                return f'{self.scenario_path}/{metric}/{extra}{self.current_file_name}.{extension}'
 
     def set_current_file_name(self, args, begin_window):
         self.current_file_name = build_file_name(args, begin_window)

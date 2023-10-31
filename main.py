@@ -41,4 +41,4 @@ if __name__ == "__main__":
     samplings_as_png(args.max_time - args.sampling_window, args.sampling_interval, simulation_info)
     token_buckets_shaper_occupation(token_buckets, simulation_info)
     time.sleep(1)
-    full_histogram_cdf(simulation_info)
+    full_histogram_cdf(args, simulation_info)

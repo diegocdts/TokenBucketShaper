@@ -174,7 +174,7 @@ def histogram(data, scenario_name, metric, simulation_info, is_full=False):
     plt.close()
 
 
-def full_histogram_cdf(simulation_info):
+def full_histogram_cdf(args, simulation_info):
     paths = [simulation_info.get_metric_path(Metric.occupancy), simulation_info.get_metric_path(Metric.latency)]
     metrics = [Metric.occupancy, Metric.latency]
     for path, metric in zip(paths, metrics):
@@ -189,3 +189,13 @@ def full_histogram_cdf(simulation_info):
 
         histogram(all_data, f'{simulation_info.scenario_name}', metric, simulation_info, is_full=True)
         cdf(all_data, f'{simulation_info.scenario_name}', metric, simulation_info, is_full=True)
+
+        if metric == Metric.occupancy:
+            max_occupation = max(all_data)
+            save_max_occupation(args, simulation_info, max_occupation)
+
+
+def save_max_occupation(args, simulation_info, max_occupation):
+    file = f'{simulation_info.parameters_analysis_path}/flows_{args.flows}'
+    with open(file, 'a') as file_writer:
+        file_writer.write(f'{args.rho}, {args.sigma}, {max_occupation}\n')

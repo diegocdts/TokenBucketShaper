@@ -39,5 +39,5 @@ if __name__ == "__main__":
 
     time.sleep(1)
     samplings_as_png(args.max_time - args.sampling_window, args.sampling_interval, simulation_info)
-    token_buckets_shaper_occupation(token_buckets, transmission_queue.file_name)
+    token_buckets_shaper_occupation(token_buckets, simulation_info)
     time.sleep(1)

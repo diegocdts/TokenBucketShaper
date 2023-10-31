@@ -4,7 +4,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-from helpers.outputs import Metric, build_rate_file_name, OutputPath
+from helpers.outputs import Metric, OutputPath, Extension
 
 
 def log(timestamp, occupancy, biggest_burst, num_bursts, received, forwarded, buckets_status):
@@ -71,22 +71,20 @@ def plot(begin_window, sampling_interval, file_path, file_name, metric, delay_sl
     cdf(data, file_name, metric)
 
 
-def export_plot_rates(args, rates_list: np.array):
-    file_name = build_rate_file_name(args)
-    path = f'{OutputPath.rate}/{file_name}'
-    np.savetxt(f'{path}.csv', rates_list, delimiter=',', fmt='%.2f')
+def export_plot_rates(simulation_info, rates_list: np.array):
+    np.savetxt(simulation_info.get_file_metric_path(Metric.rate, Extension.csv), rates_list, delimiter=',', fmt='%.2f')
 
     plt.figure(figsize=(10, 6))
     x = np.linspace(1, len(rates_list), len(rates_list))
     y = [rate for rate in rates_list]
-    plt.plot(x, y, label=file_name)
+    plt.plot(x, y, label=simulation_info.rate_file_name)
 
     plt.xticks(x, x)
     plt.xlabel('Iteration')
     plt.ylabel('Transmission rate (Bytes per sec)')
     plt.legend(loc=5)
 
-    plt.savefig(f'{path}.png')
+    plt.savefig(simulation_info.get_file_metric_path(Metric.rate, Extension.png))
     plt.close()
 
 

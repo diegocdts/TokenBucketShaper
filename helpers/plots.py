@@ -61,6 +61,7 @@ def plot(begin_window, sampling_interval, file_path, scenario_name, metric, simu
         plt.xlabel('Timestamp (s)')
 
     plt.plot(x, data, label=scenario_name)
+    plt.suptitle(simulation_info.current_file_name)
 
     plt.legend(loc=5)
 
@@ -104,6 +105,7 @@ def token_buckets_shaper_occupation(token_buckets, simulation_info):
 
         plt.xlabel('Token bucket shaper')
         plt.ylabel('Max occupation observed')
+        plt.suptitle(simulation_info.current_file_name)
 
         plt.savefig(simulation_info.get_file_metric_path(Metric.shaper, Extension.png))
         plt.close()
@@ -121,11 +123,13 @@ def cdf(data, scenario_name, metric, simulation_info, is_full=False):
     else:
         plt.xlabel('Occupancy')
     plt.ylabel('Cumulative Probability')
+    plt.suptitle(simulation_info.current_file_name)
     plt.legend(loc=5)
     plt.grid(True)
 
     if is_full:
         extra = f'Full {metric}'
+        plt.suptitle(extra)
     else:
         extra = f'{metric} - '
 
@@ -158,9 +162,11 @@ def histogram(data, scenario_name, metric, simulation_info, is_full=False):
 
     plt.xlabel(metric)
     plt.ylabel('Frequency (%)')
+    plt.suptitle(simulation_info.current_file_name)
 
     if is_full:
         extra = f'Full {metric}'
+        plt.suptitle(extra)
     else:
         extra = f'{metric} - '
 

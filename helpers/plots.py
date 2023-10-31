@@ -4,7 +4,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-from helpers.outputs import Metric, OutputPath, Extension
+from helpers.outputs import Metric, Extension
 
 
 def log(timestamp, occupancy, biggest_burst, num_bursts, received, forwarded, buckets_status):

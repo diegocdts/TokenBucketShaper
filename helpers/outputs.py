@@ -43,19 +43,6 @@ class SimulationInfo:
         return f'{self.scenario_path}/{metric}/'
 
 
-class OutputPath(Enum):
-    outputs = 'outputs'
-    occupancy = 'outputs/occupancy'
-    latency = 'outputs/latency'
-    rate = 'outputs/rate'
-    shaper = 'outputs/shaper'
-    cdf = 'outputs/cdf'
-    histogram = 'outputs/histogram'
-
-    def __str__(self):
-        return self.value
-
-
 class Metric(Enum):
     occupancy = 'occupancy'
     latency = 'latency'

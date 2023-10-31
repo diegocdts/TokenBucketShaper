@@ -3,8 +3,6 @@ import os
 import numpy as np
 from scipy import stats
 
-from helpers.outputs import OutputPath
-
 
 class Analysis:
 
@@ -26,7 +24,7 @@ class Analysis:
         self.aic_values = []
 
     def load_data(self, file_name):
-        root = f'{OutputPath.occupancy}'
+        root = f''
         files = os.listdir(f'{root}/{file_name}')
         files = [file for file in files if file.endswith('.csv')]
 

@@ -128,7 +128,7 @@ def cdf(data, scenario_name, metric, simulation_info):
     plt.close()
 
 
-def histogram(data, scenario_name, metric, simulation_info):
+def histogram(data, scenario_name, metric, simulation_info, is_full=False):
     plt.figure(figsize=(15, 7))
     if metric == Metric.latency:
         num_bins = 15
@@ -154,24 +154,26 @@ def histogram(data, scenario_name, metric, simulation_info):
     plt.xlabel(metric)
     plt.ylabel('Frequency (%)')
 
-    plt.savefig(simulation_info.get_file_metric_path(Metric.histogram, Extension.png))
+    if is_full:
+        extra = f'Full {metric} - '
+    else:
+        extra = f'{metric} - '
+
+    plt.savefig(simulation_info.get_file_metric_path(Metric.histogram, Extension.png, extra=extra))
     plt.close()
 
 
-def full_histogram(file_name: str):
-    end_index = file_name.find('[')
-    file_prefix = file_name[:end_index]
-
-    roots = [OutputPath.occupancy, OutputPath.latency]
+def full_histogram(simulation_info):
+    paths = [simulation_info.get_metric_path(Metric.occupancy), simulation_info.get_metric_path(Metric.latency)]
     metrics = [Metric.occupancy, Metric.latency]
-    for root, metric in zip(roots, metrics):
-        files = os.listdir(f'{root}/{file_prefix}')
+    for path, metric in zip(paths, metrics):
+        files = os.listdir(path)
         files = [file for file in files if file.endswith('.csv')]
 
         all_data = []
 
         for file in files:
-            data = np.loadtxt(f'{root}/{file_prefix}/{file}', delimiter=',', ndmin=1).tolist()
+            data = np.loadtxt(f'{path}/{file}', delimiter=',', ndmin=1).tolist()
             all_data = all_data + data
 
-        histogram(all_data, f'{file_prefix}full', metric)
+        histogram(all_data, f'{simulation_info.scenario_name}', metric, simulation_info, is_full=True)

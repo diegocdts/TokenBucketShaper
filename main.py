@@ -6,7 +6,7 @@ import simpy
 from helpers.arguments import arguments
 from helpers.functions import sampling_transmission_queue, show_log, plot_results, get_transmission_queue, \
     get_token_buckets, get_flows, refill_tokens
-from helpers.plots import samplings_as_png, token_buckets_shaper_occupation
+from helpers.plots import samplings_as_png, token_buckets_shaper_occupation, full_histogram
 
 if __name__ == "__main__":
     # arguments parse
@@ -41,3 +41,4 @@ if __name__ == "__main__":
     samplings_as_png(args.max_time - args.sampling_window, args.sampling_interval, simulation_info)
     token_buckets_shaper_occupation(token_buckets, simulation_info)
     time.sleep(1)
+    full_histogram(simulation_info)

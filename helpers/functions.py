@@ -3,7 +3,7 @@ import numpy as np
 from components.Flow import Flow
 from components.TokenBucketBurst import TokenBucket
 from components.TransmissionQueueBurst import TransmissionQueue
-from helpers.outputs import build_file_name
+from helpers.outputs import SimulationInfo
 from helpers.plots import export_plot_rates, samplings_as_csv, log, token_buckets_shaper_occupation, samplings_as_png
 
 
@@ -47,16 +47,15 @@ def get_transmission_queue(args, env):
 
     new_rate = round(new_rate * (args.rate_percentage / 100))
 
-    file_name = build_file_name(args, env.now, new_rate)
+    simulation_info = SimulationInfo(args, env.now, new_rate)
     transmission_queue = TransmissionQueue(env=env,
                                            rate=new_rate,
                                            mtu=args.mtu,
-                                           queue_capacity=args.queue_capacity,
-                                           file_name=file_name)
+                                           queue_capacity=args.queue_capacity)
 
-    export_plot_rates(args, rates_list)
+    export_plot_rates(simulation_info, rates_list)
 
-    return transmission_queue
+    return transmission_queue, simulation_info
 
 
 def net_calc_4_rate(args, current_rate=None):
@@ -91,24 +90,24 @@ def net_calc_4_rate(args, current_rate=None):
     return transm_rate
 
 
-def plot_results(env, args, transmission_queue, token_buckets):
+def plot_results(env, args, simulation_info, token_buckets):
     begin_window = env.now
     while True:
-        samplings_as_csv(transmission_queue.file_name)
+        samplings_as_csv(simulation_info)
         yield env.timeout(args.sampling_window)
-        samplings_as_png(begin_window, args.sampling_interval, transmission_queue.file_name, args.delay_sla)
-        token_buckets_shaper_occupation(token_buckets, transmission_queue.file_name)
+        samplings_as_png(begin_window, args.sampling_interval, simulation_info)
+        token_buckets_shaper_occupation(token_buckets, simulation_info)
         begin_window = env.now
-        transmission_queue.file_name = build_file_name(args, begin_window, transmission_queue.rate)
+        simulation_info.set_current_file_name(args, begin_window)
 
 
-def sampling_transmission_queue(env, sampling_interval, transmission_queue):
+def sampling_transmission_queue(env, sampling_interval, transmission_queue, simulation_info):
     while True:
         yield env.timeout(sampling_interval)
         occupancy = transmission_queue.max_queue_occupancy
         latencies = transmission_queue.latencies
         transmission_queue.restart_samplers()
-        samplings_as_csv(transmission_queue.file_name, occupancy, latencies)
+        samplings_as_csv(simulation_info, occupancy, latencies)
 
 
 def show_log(env, sampling_interval, transmission_queue, token_buckets):

@@ -1,11 +1,10 @@
 class TransmissionQueue:
 
-    def __init__(self, env, rate, mtu, queue_capacity, file_name):
+    def __init__(self, env, rate, mtu, queue_capacity):
         self.env = env
         self.rate = rate
         self.mtu = mtu
         self.queue_capacity = queue_capacity
-        self.file_name = file_name
 
         self.received = 0
         self.forwarded = 0

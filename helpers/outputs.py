@@ -2,6 +2,41 @@ import os
 from enum import Enum
 
 
+class SimulationInfo:
+    def __init__(self, args, begin_window, rate):
+        self.rate = rate
+        self.scenario_name = build_scenario_name(args, rate)
+        self.current_file_name = build_file_name(args, begin_window)
+        self.rate_file_name = build_rate_file_name(args)
+        self.scenario_path = self.get_scenario_path()
+        self.build_metric_paths()
+
+    def get_scenario_path(self):
+        base_dir = 'outputs'
+        if not os.path.exists(base_dir):
+            os.mkdir(base_dir)
+        scenario_path = f'{base_dir}/{self.scenario_name}'
+        if not os.path.exists(scenario_path):
+            os.mkdir(scenario_path)
+        return scenario_path
+
+    def build_metric_paths(self):
+        for metric in Metric.__members__.items():
+            name, value = metric
+            path = f'{self.scenario_path}/{value.value}'
+            if not os.path.exists(path):
+                os.mkdir(path)
+
+    def get_file_metric_path(self, metric, extension):
+        if metric == Metric.rate:
+            return f'{self.scenario_path}/{metric}/{self.rate_file_name}.{extension}'
+        else:
+            return f'{self.scenario_path}/{metric}/{self.current_file_name}.{extension}'
+
+    def set_current_file_name(self, args, begin_window):
+        self.current_file_name = build_file_name(args, begin_window)
+
+
 class OutputPath(Enum):
     outputs = 'outputs'
     occupancy = 'outputs/occupancy'
@@ -27,48 +62,32 @@ class Metric(Enum):
         return self.value
 
 
-def create_base_output_paths():
-    """
-    create the directories to save files into
-    """
-    for output in OutputPath.__members__.items():
-        name, value = output
-        if not os.path.exists(value.value):
-            os.mkdir(value.value)
+class Extension(Enum):
+    csv = 'csv'
+    png = 'png'
+
+    def __str__(self):
+        return self.value
 
 
-def create_output_path(path):
-    for output in OutputPath.__members__.items():
-        name, value = output
-        _path = f'{value.value}/{path}'
-        if value != OutputPath.outputs and value != OutputPath.rate and not os.path.exists(_path):
-            os.mkdir(_path)
-
-
-def build_file_name(args, begin_window, rate):
-    """
-    returns the name of the files to be generated for queue occupancy and latency
-    :param args parsed arguments
-    :param begin_window: the moment a new file name is created
-    :param rate transmission rate
-    :return: file name
-    """
-    path = (f'flows_{args.flows}|'
+def build_scenario_name(args, rate):
+    return (f'flows_{args.flows}|'
             f'y_{args.lambda_param}|'
             f'rho_{format_bytes(args.rho)}|'
             f'sigma_{format_bytes(args.sigma)}|'
             f'SLA_{args.delay_sla}s|'
             f'rate_{format_bytes(rate)}ps')
-    file = f'[{begin_window}s-{begin_window + args.sampling_window}s]'
-    create_output_path(path)
-    return f'{path}/{file}'
+
+
+def build_file_name(args, begin_window):
+    return f'[{begin_window}s-{begin_window + args.sampling_window}s]'
 
 
 def build_rate_file_name(args):
     return (f'flows_{args.flows}|'
             f'rho_{format_bytes(args.rho)}|'
             f'sigma_{format_bytes(args.sigma)}|'
-            f'SLA_{args.delay_sla}s|')
+            f'SLA_{args.delay_sla}s')
 
 
 def format_bytes(value):

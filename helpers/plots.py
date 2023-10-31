@@ -20,31 +20,32 @@ def log(timestamp, occupancy, biggest_burst, num_bursts, received, forwarded, bu
     sys.stdout.flush()
 
 
-def samplings_as_csv(file_name, occupancy=None, latencies=None):
-    occupation_file_path = f'{OutputPath.occupancy}/{file_name}.csv'
-    latency_file_path = f'{OutputPath.latency}/{file_name}.csv'
+def samplings_as_csv(simulation_info, occupancy=None, latencies=None):
+    occupancy_file_path = simulation_info.get_file_metric_path(Metric.occupancy, Extension.csv)
+    latency_file_path = simulation_info.get_file_metric_path(Metric.latency, Extension.csv)
     if occupancy is not None and latencies is not None:
-        with open(occupation_file_path, 'a') as file_occupancy:
+        with open(occupancy_file_path, 'a') as file_occupancy:
             file_occupancy.write(f'{occupancy}\n')
         with open(latency_file_path, 'a') as file_latency:
             file_latency.writelines('\n'.join(map(str, latencies)))
             file_latency.write('\n')
     else:
-        with open(occupation_file_path, 'w'):
+        with open(occupancy_file_path, 'w'):
             pass
         with open(latency_file_path, 'w'):
             pass
 
 
-def samplings_as_png(begin_window, sampling_interval, file_name, sla):
-    occupancy_path = f'{OutputPath.occupancy}/{file_name}.csv'
-    latency_path = f'{OutputPath.latency}/{file_name}.csv'
+def samplings_as_png(begin_window, sampling_interval, simulation_info):
+    occupancy_path = simulation_info.get_file_metric_path(Metric.occupancy, Extension.csv)
+    latency_path = simulation_info.get_file_metric_path(Metric.latency, Extension.csv)
+    scenario_name = simulation_info.scenario_name
 
-    plot(begin_window, sampling_interval, occupancy_path, file_name, Metric.occupancy)
-    plot(begin_window, sampling_interval, latency_path, file_name, Metric.latency, delay_sla=sla)
+    plot(begin_window, sampling_interval, occupancy_path, scenario_name, Metric.occupancy, simulation_info)
+    plot(begin_window, sampling_interval, latency_path, scenario_name, Metric.latency, simulation_info)
 
 
-def plot(begin_window, sampling_interval, file_path, file_name, metric, delay_sla=None):
+def plot(begin_window, sampling_interval, file_path, scenario_name, metric, simulation_info):
     data = np.loadtxt(file_path, delimiter=',', ndmin=1)
 
     plt.figure(figsize=(10, 6))
@@ -53,22 +54,21 @@ def plot(begin_window, sampling_interval, file_path, file_name, metric, delay_sl
         x = np.arange(1, len(data) + 1)
         plt.ylabel(f'{metric} (seconds)')
         plt.xlabel('Packet')
-        # plt.axhline(y=delay_sla, color='r', linestyle='--')
     else:
         x = np.linspace(int(begin_window)+sampling_interval, int(begin_window)+(sampling_interval * len(data)),
                         len(data))
         plt.ylabel(f'{metric} (packets)')
         plt.xlabel('Timestamp (s)')
 
-    plt.plot(x, data, label=file_name)
+    plt.plot(x, data, label=scenario_name)
 
     plt.legend(loc=5)
 
     plt.savefig(file_path.replace('csv', 'png'))
     plt.close()
 
-    histogram(data, file_name, metric)
-    cdf(data, file_name, metric)
+    histogram(data, scenario_name, metric, simulation_info)
+    cdf(data, scenario_name, metric, simulation_info)
 
 
 def export_plot_rates(simulation_info, rates_list: np.array):
@@ -88,14 +88,14 @@ def export_plot_rates(simulation_info, rates_list: np.array):
     plt.close()
 
 
-def token_buckets_shaper_occupation(token_buckets, file_name):
+def token_buckets_shaper_occupation(token_buckets, simulation_info):
     occupations = sorted([tb.max_shaper_occupancy for tb in token_buckets])
     [tb.__setattr__('max_shaper_occupancy', 0) for tb in token_buckets]
     shapers = list(range(1, len(occupations)+1))
 
     if max(occupations) > 0:
         plt.figure(figsize=(10, 6))
-        plt.vlines(shapers, ymin=0, ymax=occupations, colors='b', linewidth=2, label=file_name)
+        plt.vlines(shapers, ymin=0, ymax=occupations, colors='b', linewidth=2, label=simulation_info.scenario_name)
 
         plt.legend(loc=5)
 
@@ -105,16 +105,16 @@ def token_buckets_shaper_occupation(token_buckets, file_name):
         plt.xlabel('Token bucket shaper')
         plt.ylabel('Max occupation observed')
 
-        plt.savefig(f'{OutputPath.shaper}/{file_name}.png')
+        plt.savefig(simulation_info.get_file_metric_path(Metric.shaper, Extension.png))
         plt.close()
 
 
-def cdf(data, file_name, metric):
+def cdf(data, scenario_name, metric, simulation_info):
     data = sorted(data)
     cdf_data = np.arange(1, len(data) + 1) / len(data)
 
     plt.figure(figsize=(10, 6))
-    plt.plot(data, cdf_data, marker='o', linestyle='-', label=file_name)
+    plt.plot(data, cdf_data, marker='o', linestyle='-', label=scenario_name)
 
     if metric == Metric.latency:
         plt.xlabel('Latency')
@@ -124,18 +124,19 @@ def cdf(data, file_name, metric):
     plt.legend(loc=5)
     plt.grid(True)
 
-    plt.savefig(f'{OutputPath.cdf}/{file_name}_{metric}.png')
+    plt.savefig(simulation_info.get_file_metric_path(Metric.cdf, Extension.png))
     plt.close()
 
 
-def histogram(data, file_name, metric):
+def histogram(data, scenario_name, metric, simulation_info):
     plt.figure(figsize=(15, 7))
     if metric == Metric.latency:
         num_bins = 15
     else:
         num_bins = np.arange(min(data), max(data) + 2) - 0.5
 
-    hist, bins, patches = plt.hist(data, bins=num_bins, weights=np.ones(len(data)) / len(data) * 100, label=file_name)
+    hist, bins, patches = plt.hist(data, bins=num_bins, weights=np.ones(len(data)) / len(data) * 100,
+                                   label=scenario_name)
 
     plt.ylim(min(hist) - 1, max(hist) + 1)
 
@@ -153,7 +154,7 @@ def histogram(data, file_name, metric):
     plt.xlabel(metric)
     plt.ylabel('Frequency (%)')
 
-    plt.savefig(f'{OutputPath.histogram}/{file_name}_{metric}.png')
+    plt.savefig(simulation_info.get_file_metric_path(Metric.histogram, Extension.png))
     plt.close()
 
 

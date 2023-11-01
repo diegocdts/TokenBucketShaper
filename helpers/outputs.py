@@ -9,7 +9,8 @@ class SimulationInfo:
         self.current_file_name = build_file_name(args, begin_window)
         self.rate_file_name = build_rate_file_name(args)
         self.scenario_path = self.get_scenario_path()
-        self.parameters_analysis_path = get_parameters_analysis_path(args.flows, args.lambda_param)
+        self.parameters_analysis_path, self.parameters_analysis_file = get_parameters_analysis_path(args.flows,
+                                                                                                    args.lambda_param)
         self.build_metric_paths()
 
     def get_scenario_path(self):
@@ -94,7 +95,7 @@ def get_parameters_analysis_path(num_flows, lambda_param):
     file = f'{path}/flows_{num_flows}|y_{lambda_param}.{Extension.csv}'
     with open(file, 'a'):
         pass
-    return path
+    return path, file
 
 
 def format_bytes(value):

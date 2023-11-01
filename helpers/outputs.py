@@ -91,7 +91,7 @@ def get_parameters_analysis_path(num_flows):
     path = f'{base_dir}/parameters_analysis'
     if not os.path.exists(path):
         os.mkdir(path)
-    file = f'{path}/flows_{num_flows}'
+    file = f'{path}/flows_{num_flows}.{Extension.csv}'
     with open(file, 'a'):
         pass
     return path

@@ -196,6 +196,34 @@ def full_histogram_cdf(args, simulation_info):
 
 
 def save_max_occupation(args, simulation_info, max_occupation):
-    file = f'{simulation_info.parameters_analysis_path}/flows_{args.flows}'
+    file = f'{simulation_info.parameters_analysis_path}/flows_{args.flows}.{Extension.csv}'
     with open(file, 'a') as file_writer:
         file_writer.write(f'{args.rho}, {args.sigma}, {max_occupation}\n')
+
+
+def plot_parameters_analysis(simulation_info):
+    files = os.listdir(simulation_info.parameters_analysis_path)
+    files = [file for file in files if file.endswith('.csv')]
+    for file in files:
+        data = np.loadtxt(f'{simulation_info.parameters_analysis_path}/{file}', delimiter=',', ndmin=1)
+        parameters = ['rho', 'sigma']
+        for index, parameter in enumerate(parameters):
+            fixed_parameter = np.unique(data[:, index])
+            for unique in fixed_parameter:
+                file_name = file.replace(f'.{Extension.csv.value}', '')
+                flows = file_name.replace('_', ' = ')
+                file_name = f'{file_name}_fixed_{parameter}_{unique}'
+                indices = np.where(data[:, index] == unique)
+                variable_parameter = sorted(data[:, 1 - index][indices])
+                max_occupations = data[:, 2][indices]
+                plt.figure(figsize=(10, 6))
+                plt.plot(variable_parameter, max_occupations, label=file_name)
+                plt.scatter(variable_parameter, max_occupations)
+                for i, value in enumerate(max_occupations):
+                    plt.text(variable_parameter[i], value + 0.5,
+                             f'occupation = {value}\n{parameters[1 - index]} = {variable_parameter[i]}', fontsize=7,
+                             ha='center', va='bottom')
+                plt.ylabel('Max occupation')
+                plt.xlabel(parameters[1 - index])
+                plt.suptitle(f'Fixed {parameter} = {unique}\n{flows}')
+                plt.savefig(f'{simulation_info.parameters_analysis_path}/{file_name}.{Extension.png}')

@@ -225,6 +225,6 @@ def plot_parameters_analysis(simulation_info):
                                  f'occupation = {value}\n{parameters[1 - index]} = {variable_parameter[i]}', fontsize=7,
                                  ha='center', va='bottom')
                     plt.ylabel('Max occupation')
-                    plt.xlabel(parameters[1 - index])
+                    plt.xlabel(f'{parameters[1 - index]} (bytes)')
                     plt.suptitle(f'Fixed {parameter} = {format_bytes(unique)}\n{flows}')
                     plt.savefig(f'{simulation_info.parameters_analysis_path}/{file_name}.{Extension.png}')

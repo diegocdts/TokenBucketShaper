@@ -9,7 +9,7 @@ class SimulationInfo:
         self.current_file_name = build_file_name(args, begin_window)
         self.rate_file_name = build_rate_file_name(args)
         self.scenario_path = self.get_scenario_path()
-        self.parameters_analysis_path = get_parameters_analysis_path(args.flows)
+        self.parameters_analysis_path = get_parameters_analysis_path(args.flows, args.lambda_param)
         self.build_metric_paths()
 
     def get_scenario_path(self):
@@ -84,14 +84,14 @@ def build_rate_file_name(args):
             f'SLA_{args.delay_sla}s')
 
 
-def get_parameters_analysis_path(num_flows):
+def get_parameters_analysis_path(num_flows, lambda_param):
     base_dir = 'outputs'
     if not os.path.exists(base_dir):
         os.mkdir(base_dir)
     path = f'{base_dir}/parameters_analysis'
     if not os.path.exists(path):
         os.mkdir(path)
-    file = f'{path}/flows_{num_flows}.{Extension.csv}'
+    file = f'{path}/flows_{num_flows}|y_{lambda_param}.{Extension.csv}'
     with open(file, 'a'):
         pass
     return path

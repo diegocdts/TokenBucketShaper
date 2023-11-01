@@ -215,8 +215,10 @@ def plot_parameters_analysis(simulation_info):
                     flows = file_name.replace('_', ' = ')
                     file_name = f'{file_name}_fixed_{parameter}_{unique}'
                     indices = np.where(data[:, index] == unique)
-                    variable_parameter = sorted(data[:, 1 - index][indices])
-                    max_occupations = data[:, 2][indices]
+                    aux_data = data[indices]
+                    aux_data = aux_data[np.argsort(aux_data[:, 1 - index])]
+                    variable_parameter = aux_data[:, 1 - index]
+                    max_occupations = aux_data[:, 2]
                     plt.figure(figsize=(10, 6))
                     plt.plot(variable_parameter, max_occupations, label=file_name)
                     plt.scatter(variable_parameter, max_occupations)

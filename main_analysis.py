@@ -3,9 +3,9 @@ from analysis.data_visualization import Visualization
 from helpers.outputs import Metric
 
 
-def run(file_name, metric):
+def run(experiment_name, metric):
     analysis = Analysis()
-    analysis.load_data(file_name)
+    analysis.load_data(experiment_name, metric)
     best = analysis.best_distribution()
     analysis.sort_distributions_by_aic()
 
@@ -13,4 +13,4 @@ def run(file_name, metric):
     visualization.histogram(best, True)
 
 
-run('flows_50|y_100|rho_6.40KB|sigma_1.28KB|SLA_0.01s|rate_6.42MBps', Metric.occupancy)
+run('flows_100|y_100|rho_12.80KB|sigma_12.80KB|SLA_0.01s|rate_128.03MBps', Metric.occupancy)

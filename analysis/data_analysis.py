@@ -17,19 +17,19 @@ class Analysis:
             stats.weibull_min,  # Weibull Min
             stats.weibull_max,  # Weibull Max
             stats.genextreme,   # GEV
-            stats.rayleigh,      # Rayleigh
+            stats.rayleigh,     # Rayleigh
             stats.poisson,      # Poisson
             #stats.beta,         # Beta
         ]
         self.aic_values = []
 
-    def load_data(self, file_name):
-        root = f''
-        files = os.listdir(f'{root}/{file_name}')
+    def load_data(self, experiment_name, metric):
+        path = f'outputs/{experiment_name}/{metric.value}'
+        files = os.listdir(path)
         files = [file for file in files if file.endswith('.csv')]
 
         for file in files:
-            data = np.loadtxt(f'{root}/{file_name}/{file}', delimiter=',', ndmin=1).tolist()
+            data = np.loadtxt(f'{path}/{file}', delimiter=',', ndmin=1).tolist()
             self.data = self.data + data
         self.data = np.array(self.data)
 

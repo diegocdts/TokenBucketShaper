@@ -1,10 +1,8 @@
 import random
-import time
-
 import simpy
 
 from helpers.arguments import arguments
-from helpers.functions import get_transmission_queue, get_token_buckets, get_flows
+from helpers.instances import get_transmission_queue, get_token_buckets, get_flows
 from helpers.plots import samplings_as_png, token_buckets_shaper_occupation, plot_parameters_analysis
 from helpers.processes import refill_tokens, sampling
 
@@ -29,10 +27,11 @@ if __name__ == "__main__":
     # samples information from transmission_queue
     env.process(sampling(env, args, simulation_info, transmission_queue))
 
+    # runs the simpy processes
     env.run(until=args.max_time)
 
-    time.sleep(1)
+    # plot the occupation and latency from the transmission_queue, the shaper occupation from the token_buckets, and
+    # the occupation from the transmission_queue based on the rho and sigma parameters
     samplings_as_png(args, simulation_info)
     token_buckets_shaper_occupation(token_buckets, simulation_info)
-    time.sleep(1)
     plot_parameters_analysis(simulation_info)

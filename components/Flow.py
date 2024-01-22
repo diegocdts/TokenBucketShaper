@@ -1,6 +1,6 @@
 import random
 
-from components.TokenBucketBurst import PreTokenBucket
+from components.TokenBucket import PreTokenBucket
 
 
 class Packet:

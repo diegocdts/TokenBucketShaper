@@ -1,8 +1,8 @@
 import numpy as np
 
 from components.Flow import Flow
-from components.TokenBucketBurst import TokenBucket
-from components.TransmissionQueueBurst import TransmissionQueue
+from components.TokenBucket import TokenBucket
+from components.TransmissionQueue import TransmissionQueue
 from helpers.outputs import SimulationInfo
 from helpers.plots import export_plot_rates
 

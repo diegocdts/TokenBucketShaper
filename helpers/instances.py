@@ -48,10 +48,12 @@ def get_transmission_queue(args, env):
     new_rate = round(new_rate * (args.rate_percentage / 100))
 
     simulation_info = SimulationInfo(args, new_rate)
-    queue_node = QueueNode(env=env,
-                                   rate=new_rate,
-                                   mtu=args.mtu,
-                                   queue_capacity=args.queue_capacity)
+    queue_node = QueueNode(id=0,
+                           env=env,
+                           rate=new_rate,
+                           mtu=args.mtu,
+                           queue_capacity=args.queue_capacity)
+    get_next_nodes(args, queue_node)
 
     export_plot_rates(simulation_info, rates_list)
 
@@ -82,9 +84,24 @@ def net_calc_4_rate(args, current_rate=None):
     sigmay = sum(sigmay)
     # Capacity estimation based on the SLA
     delay_sla = args.delay_sla
-    transm_rate = -(s + sigmay - fixed_latency*rhoy + delay_sla*rhoy +
-                    (fixed_latency**2*rhoy**2 - 2*fixed_latency * delay_sla*rhoy**2 - 2*fixed_latency*rhoy*s +
-                     2*fixed_latency*rhoy*sigmay + delay_sla**2*rhoy**2 + 2*delay_sla*rhoy*s - 2*delay_sla*rhoy*sigmay +
-                     s**2 + 2*s*sigmay + sigmay**2)**(1/2))/(2*(fixed_latency - delay_sla))
+    transm_rate = -(s + sigmay - fixed_latency * rhoy + delay_sla * rhoy +
+                    (
+                            fixed_latency ** 2 * rhoy ** 2 - 2 * fixed_latency * delay_sla * rhoy ** 2 - 2 * fixed_latency * rhoy * s +
+                            2 * fixed_latency * rhoy * sigmay + delay_sla ** 2 * rhoy ** 2 + 2 * delay_sla * rhoy * s - 2 * delay_sla * rhoy * sigmay +
+                            s ** 2 + 2 * s * sigmay + sigmay ** 2) ** (1 / 2)) / (2 * (fixed_latency - delay_sla))
 
     return transm_rate
+
+
+def get_next_nodes(args, queue_node):
+    next_nodes = []
+    for i in range(args.num_queue_nodes - 1):
+        node = QueueNode(id=i + 1,
+                         env=queue_node.env,
+                         rate=queue_node.rate,
+                         mtu=args.mtu,
+                         queue_capacity=args.queue_capacity)
+        next_nodes.append(node)
+    for index, node in enumerate(next_nodes[:-1]):
+        node.next_node = next_nodes[index+1]
+    queue_node.next_node = next_nodes[0]

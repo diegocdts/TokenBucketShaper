@@ -1,10 +1,12 @@
 class QueueNode:
 
-    def __init__(self, env, rate, mtu, queue_capacity):
+    def __init__(self, id, env, rate, mtu, queue_capacity, next_node=None):
+        self.id = id
         self.env = env
         self.rate = rate
         self.mtu = mtu
         self.queue_capacity = queue_capacity
+        self.next_node = next_node
 
         self.received = 0
         self.forwarded = 0
@@ -18,7 +20,14 @@ class QueueNode:
 
         self.action = env.process(self.un_queuing())
 
-    def queuing(self, burst):
+    def queuing_packet(self, packet):
+        self.queue += packet
+        self.update_max_queue_occupancy()
+        self.received += 1
+        if not self.action.is_alive:
+            self.action = self.env.process(self.un_queuing())
+
+    def queuing_burst(self, burst):
         [packet.__setattr__('entered_queue_at', self.env.now) for packet in burst]
         self.queue += burst
         self.update_biggest_burst(len(burst))
@@ -33,6 +42,8 @@ class QueueNode:
             yield self.env.timeout(packet.size / self.rate)
             self.set_packet_latency(packet)
             self.forwarded += 1
+            if self.next_node:
+                self.next_node.queuing_burst(packet)
 
     def set_packet_latency(self, packet):
         packet.left_queue_at = self.env.now

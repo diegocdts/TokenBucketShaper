@@ -62,6 +62,11 @@ def arguments():
                         default=0.001,
                         help='The sampling interval')
 
+    parser.add_argument('--num_queue_nodes',
+                        type=int,
+                        default=1,
+                        help='The total of QueueNodes to instantiate')
+
     args = parser.parse_args()
 
     args.rho = args.rho * args.mtu

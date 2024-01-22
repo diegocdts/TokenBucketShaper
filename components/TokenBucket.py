@@ -75,4 +75,4 @@ class TokenBucket:
 
     def forward(self, burst):
         self.bucket -= sum(packet.size for packet in burst)
-        self.queue_node.queuing(burst)
+        self.queue_node.queuing_burst(burst)

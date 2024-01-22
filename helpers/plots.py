@@ -36,16 +36,16 @@ def samplings_as_csv(simulation_info, occupancy=None, latencies=None):
             pass
 
 
-def samplings_as_png(begin_window, sampling_interval, simulation_info):
+def samplings_as_png(args, simulation_info):
     occupancy_path = simulation_info.get_file_metric_path(Metric.occupancy, Extension.csv)
     latency_path = simulation_info.get_file_metric_path(Metric.latency, Extension.csv)
     scenario_name = simulation_info.scenario_name
 
-    plot(begin_window, sampling_interval, occupancy_path, scenario_name, Metric.occupancy, simulation_info)
-    plot(begin_window, sampling_interval, latency_path, scenario_name, Metric.latency, simulation_info)
+    plot(args, occupancy_path, scenario_name, Metric.occupancy, simulation_info)
+    plot(args, latency_path, scenario_name, Metric.latency, simulation_info)
 
 
-def plot(begin_window, sampling_interval, file_path, scenario_name, metric, simulation_info):
+def plot(args, file_path, scenario_name, metric, simulation_info):
     data = np.loadtxt(file_path, delimiter=',', ndmin=1)
 
     plt.figure(figsize=(10, 6))
@@ -55,10 +55,12 @@ def plot(begin_window, sampling_interval, file_path, scenario_name, metric, simu
         plt.ylabel(f'{metric} (seconds)')
         plt.xlabel('Packet')
     else:
-        x = np.linspace(int(begin_window)+sampling_interval, int(begin_window)+(sampling_interval * len(data)),
-                        len(data))
+        x = np.linspace(args.sampling_interval, (args.sampling_interval * len(data)), len(data))
         plt.ylabel(f'{metric} (packets)')
         plt.xlabel('Timestamp (s)')
+        # writes the max occupation in the experiment
+        max_occupation = max(data)
+        save_max_occupation(args, simulation_info, max_occupation)
 
     plt.plot(x, data, label=scenario_name)
     plt.suptitle(simulation_info.current_file_name)
@@ -172,27 +174,6 @@ def histogram(data, scenario_name, metric, simulation_info, is_full=False):
 
     plt.savefig(simulation_info.get_file_metric_path(Metric.histogram, Extension.png, extra=extra))
     plt.close()
-
-
-def full_histogram_cdf(args, simulation_info):
-    paths = [simulation_info.get_metric_path(Metric.occupancy), simulation_info.get_metric_path(Metric.latency)]
-    metrics = [Metric.occupancy, Metric.latency]
-    for path, metric in zip(paths, metrics):
-        files = os.listdir(path)
-        files = [file for file in files if file.endswith('.csv')]
-
-        all_data = []
-
-        for file in files:
-            data = np.loadtxt(f'{path}/{file}', delimiter=',', ndmin=1).tolist()
-            all_data = all_data + data
-
-        histogram(all_data, f'{simulation_info.scenario_name}', metric, simulation_info, is_full=True)
-        cdf(all_data, f'{simulation_info.scenario_name}', metric, simulation_info, is_full=True)
-
-        if metric == Metric.occupancy:
-            max_occupation = max(all_data)
-            save_max_occupation(args, simulation_info, max_occupation)
 
 
 def save_max_occupation(args, simulation_info, max_occupation):

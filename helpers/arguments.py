@@ -54,18 +54,13 @@ def arguments():
 
     parser.add_argument('--max_time',
                         type=float,
-                        default=300,
+                        default=120,
                         help='Maximum program execution time (in seconds)')
 
     parser.add_argument('--sampling_interval',
                         type=float,
                         default=0.001,
                         help='The sampling interval')
-
-    parser.add_argument('--sampling_window',
-                        type=float,
-                        default=60,
-                        help='Window to create a new set of sampling files')
 
     args = parser.parse_args()
 

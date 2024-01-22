@@ -3,10 +3,10 @@ from enum import Enum
 
 
 class SimulationInfo:
-    def __init__(self, args, begin_window, rate):
+    def __init__(self, args, rate):
         self.rate = rate
         self.scenario_name = build_scenario_name(args, rate)
-        self.current_file_name = build_file_name(args, begin_window)
+        self.current_file_name = build_file_name(args)
         self.rate_file_name = build_rate_file_name(args)
         self.scenario_path = self.get_scenario_path()
         self.parameters_analysis_path, self.parameters_analysis_file = get_parameters_analysis_path(args.flows,
@@ -38,8 +38,8 @@ class SimulationInfo:
             else:
                 return f'{self.scenario_path}/{metric}/{extra}{self.current_file_name}.{extension}'
 
-    def set_current_file_name(self, args, begin_window):
-        self.current_file_name = build_file_name(args, begin_window)
+    def set_current_file_name(self, args):
+        self.current_file_name = build_file_name(args)
 
     def get_metric_path(self, metric):
         return f'{self.scenario_path}/{metric}/'
@@ -74,8 +74,8 @@ def build_scenario_name(args, rate):
             f'rate_{format_bytes(rate)}ps')
 
 
-def build_file_name(args, begin_window):
-    return f'[{begin_window}s-{begin_window + args.sampling_window}s]'
+def build_file_name(args):
+    return f'[{args.max_time}s]'
 
 
 def build_rate_file_name(args):

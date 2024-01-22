@@ -4,7 +4,7 @@ from helpers.plots import samplings_as_csv, log
 def sampling(env, args, simulation_info, transmission_queue):
     samplings_as_csv(simulation_info)
     while True:
-        print('{:.3f}'.format(env.now))
+        print('timestamp: {:.3f}'.format(env.now))
         yield env.timeout(args.sampling_interval)
         occupancy = transmission_queue.max_queue_occupancy
         latencies = transmission_queue.latencies

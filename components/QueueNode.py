@@ -1,4 +1,4 @@
-class TransmissionQueue:
+class QueueNode:
 
     def __init__(self, env, rate, mtu, queue_capacity):
         self.env = env

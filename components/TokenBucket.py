@@ -33,13 +33,13 @@ class PreTokenBucket:
 
 
 class TokenBucket:
-    def __init__(self, env, identifier, mtu, tokens_per_second, bucket_capacity, transmission_queue):
+    def __init__(self, env, identifier, mtu, tokens_per_second, bucket_capacity, queue_node):
         self.env = env
         self.identifier = identifier
         self.mtu = mtu
         self.bucket_capacity = bucket_capacity
         self.bucket = bucket_capacity
-        self.transmission_queue = transmission_queue
+        self.queue_node = queue_node
 
         self.shaper = []
         self.shaper_capacity = int(tokens_per_second / mtu)
@@ -75,4 +75,4 @@ class TokenBucket:
 
     def forward(self, burst):
         self.bucket -= sum(packet.size for packet in burst)
-        self.transmission_queue.queuing(burst)
+        self.queue_node.queuing(burst)

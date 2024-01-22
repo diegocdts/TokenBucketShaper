@@ -3,7 +3,7 @@ import argparse
 
 def arguments():
     parser = argparse.ArgumentParser(description='Arguments to be used in Flow, TokenBucket and '
-                                                 'TransmissionQueue objects')
+                                                 'QueueNode objects')
 
     parser.add_argument('--seed',
                         type=int,

@@ -2,7 +2,7 @@ import numpy as np
 
 from components.Flow import Flow
 from components.TokenBucket import TokenBucket
-from components.TransmissionQueue import TransmissionQueue
+from components.QueueNode import QueueNode
 from helpers.outputs import SimulationInfo
 from helpers.plots import export_plot_rates
 
@@ -18,7 +18,7 @@ def get_flows(args, env, token_buckets):
     return flow
 
 
-def get_token_buckets(args, env, transmission_queue):
+def get_token_buckets(args, env, queue_node):
     token_buckets_list = []
 
     for index in range(args.flows):
@@ -27,7 +27,7 @@ def get_token_buckets(args, env, transmission_queue):
                                    mtu=args.mtu,
                                    tokens_per_second=args.rho,
                                    bucket_capacity=args.sigma,
-                                   transmission_queue=transmission_queue)
+                                   queue_node=queue_node)
         token_buckets_list.append(token_bucket)
 
     return token_buckets_list
@@ -48,14 +48,14 @@ def get_transmission_queue(args, env):
     new_rate = round(new_rate * (args.rate_percentage / 100))
 
     simulation_info = SimulationInfo(args, new_rate)
-    transmission_queue = TransmissionQueue(env=env,
-                                           rate=new_rate,
-                                           mtu=args.mtu,
-                                           queue_capacity=args.queue_capacity)
+    queue_node = QueueNode(env=env,
+                                   rate=new_rate,
+                                   mtu=args.mtu,
+                                   queue_capacity=args.queue_capacity)
 
     export_plot_rates(simulation_info, rates_list)
 
-    return transmission_queue, simulation_info
+    return queue_node, simulation_info
 
 
 def net_calc_4_rate(args, current_rate=None):

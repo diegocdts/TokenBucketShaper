@@ -16,8 +16,8 @@ if __name__ == "__main__":
     env = simpy.Environment()
 
     # instantiates the token_buckets and flows lists and the transmission queue using the parsed arguments
-    queue_node, simulation_info = get_transmission_queue(args, env)
-    token_buckets = get_token_buckets(args, env, queue_node)
+    queue_nodes, simulation_info = get_transmission_queue(args, env)
+    token_buckets = get_token_buckets(args, env, queue_nodes[0])
     flows = get_flows(args, env, token_buckets)
 
     # refill tokens
@@ -25,13 +25,13 @@ if __name__ == "__main__":
     env.process(refill_tokens(env, mtu=args.mtu, tokens_per_second=args.rho, token_buckets=token_buckets))
 
     # samples information from queue_node
-    env.process(sampling(env, args, simulation_info, queue_node))
+    env.process(sampling(env, args, simulation_info, queue_nodes))
 
     # runs the simpy processes
     env.run(until=args.max_time)
 
     # plot the occupation and latency from the queue_node, the shaper occupation from the token_buckets, and
     # the occupation from the queue_node based on the rho and sigma parameters
-    samplings_as_png(args, simulation_info)
+    samplings_as_png(args, simulation_info, queue_nodes)
     token_buckets_shaper_occupation(token_buckets, simulation_info)
     plot_parameters_analysis(simulation_info)

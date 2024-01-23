@@ -48,16 +48,11 @@ def get_transmission_queue(args, env):
     new_rate = round(new_rate * (args.rate_percentage / 100))
 
     simulation_info = SimulationInfo(args, new_rate)
-    queue_node = QueueNode(id=0,
-                           env=env,
-                           rate=new_rate,
-                           mtu=args.mtu,
-                           queue_capacity=args.queue_capacity)
-    get_next_nodes(args, queue_node)
+    queue_nodes = get_next_nodes(args, env=env, rate=new_rate)
 
     export_plot_rates(simulation_info, rates_list)
 
-    return queue_node, simulation_info
+    return queue_nodes, simulation_info
 
 
 def net_calc_4_rate(args, current_rate=None):
@@ -93,15 +88,11 @@ def net_calc_4_rate(args, current_rate=None):
     return transm_rate
 
 
-def get_next_nodes(args, queue_node):
-    next_nodes = []
-    for i in range(args.num_queue_nodes - 1):
-        node = QueueNode(id=i + 1,
-                         env=queue_node.env,
-                         rate=queue_node.rate,
-                         mtu=args.mtu,
-                         queue_capacity=args.queue_capacity)
-        next_nodes.append(node)
-    for index, node in enumerate(next_nodes[:-1]):
-        node.next_node = next_nodes[index+1]
-    queue_node.next_node = next_nodes[0]
+def get_next_nodes(args, env, rate):
+    queue_nodes = []
+    for i in range(args.num_queue_nodes):
+        node = QueueNode(identifier=i, env=env, rate=rate, mtu=args.mtu, queue_capacity=args.queue_capacity)
+        queue_nodes.append(node)
+    for index, node in enumerate(queue_nodes[:-1]):
+        node.next_node = queue_nodes[index + 1]
+    return queue_nodes

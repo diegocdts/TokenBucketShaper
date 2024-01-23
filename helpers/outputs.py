@@ -2,16 +2,24 @@ import os
 from enum import Enum
 
 
+def node_directory(node):
+    return f'node_{node}'
+
+
+def set_file_name(args):
+    return f'[{args.max_time}s]'
+
+
 class SimulationInfo:
     def __init__(self, args, rate):
         self.rate = rate
         self.scenario_name = build_scenario_name(args, rate)
-        self.current_file_name = build_file_name(args)
+        self.file_name = set_file_name(args)
         self.rate_file_name = build_rate_file_name(args)
         self.scenario_path = self.get_scenario_path()
         self.parameters_analysis_path, self.parameters_analysis_file = get_parameters_analysis_path(args.flows,
                                                                                                     args.lambda_param)
-        self.build_metric_paths()
+        self.build_metric_paths(args)
 
     def get_scenario_path(self):
         base_dir = 'outputs'
@@ -22,27 +30,30 @@ class SimulationInfo:
             os.mkdir(scenario_path)
         return scenario_path
 
-    def build_metric_paths(self):
-        for metric in Metric.__members__.items():
-            name, value = metric
-            path = f'{self.scenario_path}/{value.value}'
-            if not os.path.exists(path):
-                os.mkdir(path)
+    def build_metric_paths(self, args):
+        for node in range(args.num_queue_nodes):
+            # creates one directory per node
+            node_path = f'{self.scenario_path}/{node_directory(node)}'
+            if not os.path.exists(node_path):
+                os.mkdir(node_path)
+            for metric in Metric.__members__.items():
+                name, value = metric
+                if value == Metric.rate or value == Metric.shaper:
+                    # creates the rate and shaper directories inside the scenario directory
+                    metric_path = f'{self.scenario_path}/{value.value}'
+                else:
+                    # creates the other metric directories inside the node directory
+                    metric_path = f'{node_path}/{value.value}'
+                if not os.path.exists(metric_path):
+                    os.mkdir(metric_path)
 
-    def get_file_metric_path(self, metric, extension, extra=''):
-        if metric == Metric.rate:
-            return f'{self.scenario_path}/{metric}/{self.rate_file_name}.{extension}'
+    def get_file_metric_path(self, metric, extension, node_id='', extra=''):
+        if metric == Metric.latency or metric == Metric.occupancy:
+            return f'{self.scenario_path}/{node_directory(node_id)}/{metric}/{self.file_name}.{extension}'
+        elif metric == Metric.histogram or metric == Metric.cdf:
+            return f'{self.scenario_path}/{node_directory(node_id)}/{metric}/{extra}{self.file_name}.{extension}'
         else:
-            if 'Full' in extra:
-                return f'{self.scenario_path}/{metric}/{extra}.{extension}'
-            else:
-                return f'{self.scenario_path}/{metric}/{extra}{self.current_file_name}.{extension}'
-
-    def set_current_file_name(self, args):
-        self.current_file_name = build_file_name(args)
-
-    def get_metric_path(self, metric):
-        return f'{self.scenario_path}/{metric}/'
+            return f'{self.scenario_path}/{metric}/{self.file_name}.{extension}'
 
 
 class Metric(Enum):
@@ -72,10 +83,6 @@ def build_scenario_name(args, rate):
             f'sigma_{format_bytes(args.sigma)}|'
             f'SLA_{args.delay_sla}s|'
             f'rate_{format_bytes(rate)}ps')
-
-
-def build_file_name(args):
-    return f'[{args.max_time}s]'
 
 
 def build_rate_file_name(args):

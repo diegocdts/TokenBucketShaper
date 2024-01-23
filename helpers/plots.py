@@ -20,9 +20,9 @@ def log(timestamp, occupancy, biggest_burst, num_bursts, received, forwarded, bu
     sys.stdout.flush()
 
 
-def samplings_as_csv(simulation_info, occupancy=None, latencies=None):
-    occupancy_file_path = simulation_info.get_file_metric_path(Metric.occupancy, Extension.csv)
-    latency_file_path = simulation_info.get_file_metric_path(Metric.latency, Extension.csv)
+def samplings_as_csv(node_id, simulation_info, occupancy=None, latencies=None):
+    occupancy_file_path = simulation_info.get_file_metric_path(Metric.occupancy, Extension.csv, node_id=node_id)
+    latency_file_path = simulation_info.get_file_metric_path(Metric.latency, Extension.csv, node_id=node_id)
     if occupancy is not None and latencies is not None:
         with open(occupancy_file_path, 'a') as file_occupancy:
             file_occupancy.write(f'{occupancy}\n')
@@ -36,16 +36,17 @@ def samplings_as_csv(simulation_info, occupancy=None, latencies=None):
             pass
 
 
-def samplings_as_png(args, simulation_info):
-    occupancy_path = simulation_info.get_file_metric_path(Metric.occupancy, Extension.csv)
-    latency_path = simulation_info.get_file_metric_path(Metric.latency, Extension.csv)
-    scenario_name = simulation_info.scenario_name
+def samplings_as_png(args, simulation_info, queue_nodes):
+    for node in queue_nodes:
+        occupancy_path = simulation_info.get_file_metric_path(Metric.occupancy, Extension.csv, node_id=node.id)
+        latency_path = simulation_info.get_file_metric_path(Metric.latency, Extension.csv, node_id=node.id)
+        scenario_name = simulation_info.scenario_name
 
-    plot(args, occupancy_path, scenario_name, Metric.occupancy, simulation_info)
-    plot(args, latency_path, scenario_name, Metric.latency, simulation_info)
+        plot(args, occupancy_path, scenario_name, Metric.occupancy, simulation_info, node_id=node.id)
+        plot(args, latency_path, scenario_name, Metric.latency, simulation_info, node_id=node.id)
 
 
-def plot(args, file_path, scenario_name, metric, simulation_info):
+def plot(args, file_path, scenario_name, metric, simulation_info, node_id):
     data = np.loadtxt(file_path, delimiter=',', ndmin=1)
 
     plt.figure(figsize=(10, 6))
@@ -63,15 +64,15 @@ def plot(args, file_path, scenario_name, metric, simulation_info):
         save_max_occupation(args, simulation_info, max_occupation)
 
     plt.plot(x, data, label=scenario_name)
-    plt.suptitle(simulation_info.current_file_name)
+    plt.suptitle(simulation_info.file_name)
 
     plt.legend(loc=5)
 
     plt.savefig(file_path.replace('csv', 'png'))
     plt.close()
 
-    histogram(data, scenario_name, metric, simulation_info)
-    cdf(data, scenario_name, metric, simulation_info)
+    histogram(data, scenario_name, metric, simulation_info, node_id)
+    cdf(data, scenario_name, metric, simulation_info, node_id)
 
 
 def export_plot_rates(simulation_info, rates_list: np.array):
@@ -107,13 +108,13 @@ def token_buckets_shaper_occupation(token_buckets, simulation_info):
 
         plt.xlabel('Token bucket shaper')
         plt.ylabel('Max occupation observed')
-        plt.suptitle(simulation_info.current_file_name)
+        plt.suptitle(simulation_info.file_name)
 
         plt.savefig(simulation_info.get_file_metric_path(Metric.shaper, Extension.png))
         plt.close()
 
 
-def cdf(data, scenario_name, metric, simulation_info, is_full=False):
+def cdf(data, scenario_name, metric, simulation_info, node_id):
     data = sorted(data)
     cdf_data = np.arange(1, len(data) + 1) / len(data)
 
@@ -125,21 +126,17 @@ def cdf(data, scenario_name, metric, simulation_info, is_full=False):
     else:
         plt.xlabel('Occupancy')
     plt.ylabel('Cumulative Probability')
-    plt.suptitle(simulation_info.current_file_name)
+    plt.suptitle(simulation_info.file_name)
     plt.legend(loc=5)
     plt.grid(True)
 
-    if is_full:
-        extra = f'Full {metric}'
-        plt.suptitle(extra)
-    else:
-        extra = f'{metric} - '
+    extra = f'{metric} - '
 
-    plt.savefig(simulation_info.get_file_metric_path(Metric.cdf, Extension.png, extra=extra))
+    plt.savefig(simulation_info.get_file_metric_path(Metric.cdf, Extension.png, node_id=node_id, extra=extra))
     plt.close()
 
 
-def histogram(data, scenario_name, metric, simulation_info, is_full=False):
+def histogram(data, scenario_name, metric, simulation_info, node_id):
     plt.figure(figsize=(15, 7))
     if metric == Metric.latency:
         num_bins = 15
@@ -164,15 +161,11 @@ def histogram(data, scenario_name, metric, simulation_info, is_full=False):
 
     plt.xlabel(metric)
     plt.ylabel('Frequency (%)')
-    plt.suptitle(simulation_info.current_file_name)
+    plt.suptitle(simulation_info.file_name)
 
-    if is_full:
-        extra = f'Full {metric}'
-        plt.suptitle(extra)
-    else:
-        extra = f'{metric} - '
+    extra = f'{metric} - '
 
-    plt.savefig(simulation_info.get_file_metric_path(Metric.histogram, Extension.png, extra=extra))
+    plt.savefig(simulation_info.get_file_metric_path(Metric.histogram, Extension.png, node_id=node_id, extra=extra))
     plt.close()
 
 

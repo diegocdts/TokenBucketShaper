@@ -61,11 +61,12 @@ class UncontrolledFlow:
         self.action = env.process(self.send_packet())
 
     def send_packet(self):
-        while True:
-            inter_packet_interval = random.expovariate(self.lambda_param * self.num_uflows)
-            uflow = random.randint(0, self.num_uflows - 1)
-            node_index = self.dictionary.get(uflow)
-            yield self.env.timeout(inter_packet_interval)
+        if self.num_uflows > 0:
+            while True:
+                inter_packet_interval = random.expovariate(self.lambda_param * self.num_uflows)
+                uflow = random.randint(0, self.num_uflows - 1)
+                node_index = self.dictionary.get(uflow)
+                yield self.env.timeout(inter_packet_interval)
 
-            packet = Packet(size=self.mtu, now=self.env.now)
-            self.queue_nodes[node_index].queuing_packet(packet)
+                packet = Packet(size=self.mtu, now=self.env.now)
+                self.queue_nodes[node_index].queuing_packet(packet)

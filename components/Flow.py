@@ -33,3 +33,39 @@ class Flow:
 
             packet = Packet(size=self.mtu, now=self.env.now)
             self.pre_token_buckets[flow].shaping(packet)
+
+
+def dictionary_uflow_node(uflows_node):
+    keys = uflows_node.split(',')
+    dictionary = {}
+    uflow = 0
+    for key in keys:
+        split = key.split('_')
+        number_of_uflows = int(split[0])
+        node = int(split[1])
+        for _ in range(number_of_uflows):
+            dictionary[uflow] = node
+            uflow += 1
+    return dictionary
+
+
+class UncontrolledFlow:
+    def __init__(self, env, uflows_node, uflow_lambda_param, mtu, queue_nodes):
+        self.env = env
+        self.dictionary = dictionary_uflow_node(uflows_node)
+        self.lambda_param = uflow_lambda_param
+        self.mtu = mtu
+        self.queue_nodes = queue_nodes
+
+        self.num_uflows = len(self.dictionary)
+        self.action = env.process(self.send_packet())
+
+    def send_packet(self):
+        while True:
+            inter_packet_interval = random.expovariate(self.lambda_param * self.num_uflows)
+            uflow = random.randint(0, self.num_uflows - 1)
+            node_index = self.dictionary.get(uflow)
+            yield self.env.timeout(inter_packet_interval)
+
+            packet = Packet(size=self.mtu, now=self.env.now)
+            self.queue_nodes[node_index].queuing_packet(packet)

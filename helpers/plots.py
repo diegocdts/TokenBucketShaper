@@ -38,6 +38,7 @@ def samplings_as_csv(node_id, simulation_info, occupancy=None, latencies=None):
 
 def samplings_as_png(args, simulation_info, queue_nodes):
     for node in queue_nodes:
+        print(f'Preparing the plots for Node {node.id}')
         occupancy_path = simulation_info.get_file_metric_path(Metric.occupancy, Extension.csv, node_id=node.id)
         latency_path = simulation_info.get_file_metric_path(Metric.latency, Extension.csv, node_id=node.id)
         scenario_name = simulation_info.scenario_name
@@ -61,7 +62,7 @@ def plot(args, file_path, scenario_name, metric, simulation_info, node_id):
         plt.xlabel('Timestamp (s)')
         # writes the max occupation in the experiment
         max_occupation = max(data)
-        save_max_occupation(args, simulation_info, max_occupation)
+        save_max_occupation(args, simulation_info, max_occupation, node_id)
 
     plt.plot(x, data, label=scenario_name)
     plt.suptitle(simulation_info.file_name)
@@ -76,6 +77,7 @@ def plot(args, file_path, scenario_name, metric, simulation_info, node_id):
 
 
 def export_plot_rates(simulation_info, rates_list: np.array):
+    print('Preparing the rate plot')
     np.savetxt(simulation_info.get_file_metric_path(Metric.rate, Extension.csv), rates_list, delimiter=',', fmt='%.2f')
 
     plt.figure(figsize=(10, 6))
@@ -93,6 +95,7 @@ def export_plot_rates(simulation_info, rates_list: np.array):
 
 
 def token_buckets_shaper_occupation(token_buckets, simulation_info):
+    print('Preparing the token buckets shaper occupation plot')
     occupations = sorted([tb.max_shaper_occupancy for tb in token_buckets])
     [tb.__setattr__('max_shaper_occupancy', 0) for tb in token_buckets]
     shapers = list(range(1, len(occupations)+1))
@@ -169,10 +172,10 @@ def histogram(data, scenario_name, metric, simulation_info, node_id):
     plt.close()
 
 
-def save_max_occupation(args, simulation_info, max_occupation):
+def save_max_occupation(args, simulation_info, max_occupation, node_id):
     file = simulation_info.parameters_analysis_file
     with open(file, 'a') as file_writer:
-        file_writer.write(f'{args.rho}, {args.sigma}, {max_occupation}\n')
+        file_writer.write(f'{args.rho}, {args.sigma}, {max_occupation}, {node_id}\n')
 
 
 def plot_parameters_analysis(simulation_info):
@@ -193,12 +196,15 @@ def plot_parameters_analysis(simulation_info):
                     aux_data = aux_data[np.argsort(aux_data[:, 1 - index])]
                     variable_parameter = aux_data[:, 1 - index]
                     max_occupations = aux_data[:, 2]
+                    node_ids = aux_data[:, 3]
                     plt.figure(figsize=(10, 6))
                     plt.plot(variable_parameter, max_occupations, label=file_name)
                     plt.scatter(variable_parameter, max_occupations)
                     for i, value in enumerate(max_occupations):
                         plt.text(variable_parameter[i], value + 0.5,
-                                 f'occupation = {value}\n{parameters[1 - index]} = {variable_parameter[i]}', fontsize=7,
+                                 f'occupation = {value}\n'
+                                 f'{parameters[1 - index]} = {variable_parameter[i]}\n'
+                                 f'node id = {int(node_ids[i])}', fontsize=7,
                                  ha='center', va='bottom')
                     plt.ylabel('Max occupation')
                     plt.xlabel(f'{parameters[1 - index]} (bytes)')

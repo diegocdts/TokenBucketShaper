@@ -21,6 +21,7 @@ class QueueNode:
         self.action = env.process(self.un_queuing())
 
     def queuing_packet(self, packet):
+        packet.entered_queue_at = self.env.now
         self.queue.append(packet)
         self.update_max_queue_occupancy()
         self.received += 1

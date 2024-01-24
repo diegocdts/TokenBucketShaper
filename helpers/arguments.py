@@ -67,6 +67,20 @@ def arguments():
                         default=1,
                         help='The total of QueueNodes to instantiate')
 
+    parser.add_argument('--uflows_node',
+                        type=str,
+                        default='0_0',
+                        help='The number of uncontrolled flows per queue node in the form '
+                             '\'numberOfFlows_queueNodeIndex\'. Use a comma to specify the number for multiple nodes. '
+                             'Ex: \'2_0,0_1,2_2\' where there are 2 flows for node 0, no flow for node 1, and 2 flows '
+                             'for node 2.')
+
+    parser.add_argument('--uflow_lambda_param',
+                        type=float,
+                        default=100,
+                        help='The lambda parameter for the expovariate random time inter packets of the uncontrolled '
+                             'flows')
+
     args = parser.parse_args()
 
     args.rho = args.rho * args.mtu

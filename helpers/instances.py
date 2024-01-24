@@ -1,10 +1,19 @@
 import numpy as np
 
-from components.Flow import Flow
+from components.Flow import Flow, UncontrolledFlow
 from components.TokenBucket import TokenBucket
 from components.QueueNode import QueueNode
 from helpers.outputs import SimulationInfo
 from helpers.plots import export_plot_rates
+
+
+def get_uflows(args, env, queue_nodes):
+    uflow = UncontrolledFlow(env=env,
+                             uflows_node=args.uflows_node,
+                             uflow_lambda_param=args.uflow_lambda_param,
+                             mtu=args.mtu,
+                             queue_nodes=queue_nodes)
+    return uflow
 
 
 def get_flows(args, env, token_buckets):

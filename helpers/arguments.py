@@ -12,7 +12,7 @@ def arguments():
 
     parser.add_argument('--flows',
                         type=int,
-                        default=10,
+                        default=100,
                         help='Total number of flows')
 
     parser.add_argument('--lambda_param',
@@ -44,7 +44,7 @@ def arguments():
 
     parser.add_argument('--mtu',
                         type=int,
-                        default=1,
+                        default=128,
                         help='Maximum Transmission Unit')
 
     parser.add_argument('--rate_percentage',
@@ -54,7 +54,7 @@ def arguments():
 
     parser.add_argument('--max_time',
                         type=float,
-                        default=120,
+                        default=15,
                         help='Maximum program execution time (in seconds)')
 
     parser.add_argument('--num_queue_nodes',

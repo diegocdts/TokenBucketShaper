@@ -6,21 +6,19 @@ import matplotlib.pyplot as plt
 from helpers.outputs import Metric, Extension, format_bytes
 
 
-def samplings_as_csv(node_id, simulation_info, occupancies=None, latencies=None):
-    occupancy_file_path = simulation_info.get_file_metric_path(Metric.occupancy, Extension.csv, node_id=node_id)
-    latency_file_path = simulation_info.get_file_metric_path(Metric.latency, Extension.csv, node_id=node_id)
-    if occupancies is not None and latencies is not None:
-        with open(occupancy_file_path, 'a') as file_occupancy:
-            file_occupancy.writelines('\n'.join(map(str, occupancies)))
-            file_occupancy.write('\n')
-        with open(latency_file_path, 'a') as file_latency:
-            file_latency.writelines('\n'.join(map(str, latencies)))
-            file_latency.write('\n')
-    else:
-        with open(occupancy_file_path, 'w'):
-            pass
-        with open(latency_file_path, 'w'):
-            pass
+def samplings_as_csv(simulation_info, queue_nodes):
+    for node in queue_nodes:
+        occupancies = node.occupancies
+        latencies = node.latencies
+        occupancy_file_path = simulation_info.get_file_metric_path(Metric.occupancy, Extension.csv, node_id=node.id)
+        latency_file_path = simulation_info.get_file_metric_path(Metric.latency, Extension.csv, node_id=node.id)
+        if occupancies is not None and latencies is not None:
+            with open(occupancy_file_path, 'w') as file_occupancy:
+                file_occupancy.writelines('\n'.join(map(str, occupancies)))
+                file_occupancy.write('\n')
+            with open(latency_file_path, 'w') as file_latency:
+                file_latency.writelines('\n'.join(map(str, latencies)))
+                file_latency.write('\n')
 
 
 def samplings_as_png(args, simulation_info, queue_nodes):

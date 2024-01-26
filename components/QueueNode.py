@@ -9,8 +9,6 @@ class QueueNode:
         self.next_node = next_node
 
         self.queue = []
-        self.biggest_burst = 0
-        self.num_bursts = 0
 
         self.occupancies = []
         self.latencies = []
@@ -47,7 +45,5 @@ class QueueNode:
         self.occupancies.append(len(self.queue))
 
     def restart_samplers(self):
-        self.biggest_burst = 0
-        self.num_bursts = 0
         self.occupancies = []
         self.latencies = []

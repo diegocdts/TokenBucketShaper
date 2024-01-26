@@ -21,5 +21,3 @@
 --rate_percentage: Percentual da taxa calculada de transmissão a ser usada (padrão: 100%).
 
 --max_time: Especifica o tempo máximo de execução do programa em segundos (padrão: 120 segundos).
-
---sampling_interval: Intervalo de amostragem (padrão: 0.001s).

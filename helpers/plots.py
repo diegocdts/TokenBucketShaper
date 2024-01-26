@@ -8,17 +8,13 @@ from helpers.outputs import Metric, Extension, format_bytes
 
 def samplings_as_csv(simulation_info, queue_nodes):
     for node in queue_nodes:
-        occupancies = node.occupancies
-        latencies = node.latencies
+        occupancies = np.array(node.occupancies)
         occupancy_file_path = simulation_info.get_file_metric_path(Metric.occupancy, Extension.csv, node_id=node.id)
+        np.savetxt(occupancy_file_path, occupancies, delimiter=',')
+
+        latencies = np.array(node.latencies)
         latency_file_path = simulation_info.get_file_metric_path(Metric.latency, Extension.csv, node_id=node.id)
-        if occupancies is not None and latencies is not None:
-            with open(occupancy_file_path, 'w') as file_occupancy:
-                file_occupancy.writelines('\n'.join(map(str, occupancies)))
-                file_occupancy.write('\n')
-            with open(latency_file_path, 'w') as file_latency:
-                file_latency.writelines('\n'.join(map(str, latencies)))
-                file_latency.write('\n')
+        np.savetxt(latency_file_path, latencies, delimiter=',')
 
 
 def samplings_as_png(args, simulation_info, queue_nodes):
@@ -33,7 +29,7 @@ def samplings_as_png(args, simulation_info, queue_nodes):
 
 
 def plot(args, file_path, scenario_name, metric, simulation_info, node_id):
-    data = np.loadtxt(file_path, delimiter=',', ndmin=1)
+    data = np.loadtxt(file_path, delimiter=',')
 
     plt.figure(figsize=(10, 6))
     x = np.arange(1, len(data) + 1)
@@ -169,7 +165,7 @@ def plot_parameters_analysis(simulation_info):
     files = [file for file in files if file.endswith('.csv')]
     for file in files:
         data = np.loadtxt(f'{simulation_info.parameters_analysis_path}/{file}', delimiter=',', ndmin=1)
-        parameters = ['rho', 'sigma']
+        parameters = ['RHO', 'SIGMA']
         for index, parameter in enumerate(parameters):
             if data.ndim > 1:
                 fixed_parameter = np.unique(data[:, index])
@@ -189,10 +185,10 @@ def plot_parameters_analysis(simulation_info):
                     plt.scatter(variable_parameter, max_occupations)
                     for i, value in enumerate(max_occupations):
                         plt.text(variable_parameter[i], value + 0.5,
-                                 f'occupation = {int(value)}\n'
-                                 f'rate = {format_bytes(rates[i])}ps\n'
+                                 f'OCC = {int(value)}\n'
+                                 f'RT = {format_bytes(rates[i])}ps\n'
                                  f'{parameters[1 - index]} = {format_bytes(variable_parameter[i])}\n'
-                                 f'node id = {int(node_ids[i])}', fontsize=7,
+                                 f'NODE = {int(node_ids[i])}', fontsize=7,
                                  ha='center', va='bottom')
                     locs, labels = plt.xticks()
                     xticks = [format_bytes(float(value.get_text())) for value in labels]

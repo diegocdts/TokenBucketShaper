@@ -88,11 +88,10 @@ def net_calc_4_rate(args, current_rate=None):
     sigmay = sum(sigmay)
     # Capacity estimation based on the SLA
     delay_sla = args.delay_sla
-    transm_rate = -(s + sigmay - fixed_latency * rhoy + delay_sla * rhoy +
-                    (
-                            fixed_latency ** 2 * rhoy ** 2 - 2 * fixed_latency * delay_sla * rhoy ** 2 - 2 * fixed_latency * rhoy * s +
-                            2 * fixed_latency * rhoy * sigmay + delay_sla ** 2 * rhoy ** 2 + 2 * delay_sla * rhoy * s - 2 * delay_sla * rhoy * sigmay +
-                            s ** 2 + 2 * s * sigmay + sigmay ** 2) ** (1 / 2)) / (2 * (fixed_latency - delay_sla))
+    
+    transm_rate = -(s + sigmay - fixed_latency * rhoy + delay_sla * rhoy + (
+                fixed_latency ** 2 * rhoy ** 2 - 2 * fixed_latency * delay_sla * rhoy ** 2 - 2 * fixed_latency * rhoy * s + 2 * fixed_latency * rhoy * sigmay + delay_sla ** 2 * rhoy ** 2 + 2 * delay_sla * rhoy * s - 2 * delay_sla * rhoy * sigmay + s ** 2 + 2 * s * sigmay + sigmay ** 2) ** (
+                           1 / 2)) / (2 * (fixed_latency - delay_sla))
 
     return transm_rate
 

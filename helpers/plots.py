@@ -38,13 +38,12 @@ def plot(args, file_path, scenario_name, metric, simulation_info, node_id):
     data = np.loadtxt(file_path, delimiter=',', ndmin=1)
 
     plt.figure(figsize=(10, 6))
+    x = np.arange(1, len(data) + 1)
 
     if metric == Metric.latency:
-        x = np.arange(1, len(data) + 1)
         plt.ylabel(f'{metric} (seconds)')
         plt.xlabel('Packet')
     else:
-        x = np.linspace(args.sampling_interval, (args.sampling_interval * len(data)), len(data))
         plt.ylabel(f'{metric} (packets)')
         plt.xlabel('Timestamp (s)')
         # writes the max occupation in the experiment

@@ -57,11 +57,6 @@ def arguments():
                         default=120,
                         help='Maximum program execution time (in seconds)')
 
-    parser.add_argument('--sampling_interval',
-                        type=float,
-                        default=0.001,
-                        help='The sampling interval')
-
     parser.add_argument('--num_queue_nodes',
                         type=int,
                         default=1,

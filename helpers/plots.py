@@ -45,7 +45,7 @@ def plot(args, file_path, scenario_name, metric, simulation_info, node_id):
         plt.xlabel('Packet')
     else:
         plt.ylabel(f'{metric} (packets)')
-        plt.xlabel('Timestamp (s)')
+        plt.xlabel('Sample')
         # writes the max occupation in the experiment
         max_occupation = max(data)
         save_max_occupation(args, simulation_info, max_occupation, node_id)

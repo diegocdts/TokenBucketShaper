@@ -25,7 +25,7 @@ class PreTokenBucket:
             self.shaper.append(packet)
 
     def send_burst(self):
-        if self.shaper and self.bucket >= 0:
+        if self.shaper and self.bucket > self.shaper[0].size:
             to_send, to_keep = split_burst(self.shaper, self.bucket)
             if to_send:
                 self.token_bucket.handle_burst(to_send)

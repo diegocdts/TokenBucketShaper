@@ -1,4 +1,4 @@
-from helpers.plots import samplings_as_csv, log
+from helpers.plots import samplings_as_csv
 
 
 def sampling(env, args, simulation_info, queue_nodes):
@@ -8,10 +8,10 @@ def sampling(env, args, simulation_info, queue_nodes):
         print('timestamp: {:.3f}'.format(env.now))
         yield env.timeout(args.sampling_interval)
         for node in queue_nodes:
-            occupancy = node.max_queue_occupancy
+            occupancies = node.occupancies
             latencies = node.latencies
             node.restart_samplers()
-            samplings_as_csv(node.id, simulation_info, occupancy, latencies)
+            samplings_as_csv(node.id, simulation_info, occupancies, latencies)
 
 
 def refill_tokens(env, mtu, tokens_per_second, token_buckets):
@@ -19,11 +19,3 @@ def refill_tokens(env, mtu, tokens_per_second, token_buckets):
         yield env.timeout(mtu / tokens_per_second)
         for token_bucket in token_buckets:
             token_bucket.new_tokens()
-
-
-def show_log(env, sampling_interval, queue_node, token_buckets):
-    while True:
-        yield env.timeout(sampling_interval)
-        buckets_status = '|'.join(str(token_bucket.bucket) for token_bucket in token_buckets)
-        log(env.now, queue_node.max_queue_occupancy, queue_node.biggest_burst,
-            queue_node.num_bursts, queue_node.received, queue_node.forwarded, buckets_status)

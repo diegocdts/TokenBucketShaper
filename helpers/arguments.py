@@ -17,7 +17,7 @@ def arguments():
 
     parser.add_argument('--lambda_param',
                         type=float,
-                        default=100,
+                        default=1000,
                         help='The lambda parameter for the expovariate random time inter packets')
 
     parser.add_argument('--rho',

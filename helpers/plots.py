@@ -1,5 +1,4 @@
 import os
-import sys
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,25 +6,13 @@ import matplotlib.pyplot as plt
 from helpers.outputs import Metric, Extension, format_bytes
 
 
-def log(timestamp, occupancy, biggest_burst, num_bursts, received, forwarded, buckets_status):
-    space = '  -  '
-    message = (f'timestamp: {timestamp:.4f}{space}'
-               f'max occupancy: {occupancy} packets{space}'
-               f'biggest burst: {biggest_burst} packets{space}'
-               f'num bursts: {num_bursts} packets{space}'
-               f'packets received: {received}{space}'
-               f'packets forwarded: {forwarded}{space}\n'
-               f'buckets status: {buckets_status}\n')
-    sys.stdout.write('\r' + message)
-    sys.stdout.flush()
-
-
-def samplings_as_csv(node_id, simulation_info, occupancy=None, latencies=None):
+def samplings_as_csv(node_id, simulation_info, occupancies=None, latencies=None):
     occupancy_file_path = simulation_info.get_file_metric_path(Metric.occupancy, Extension.csv, node_id=node_id)
     latency_file_path = simulation_info.get_file_metric_path(Metric.latency, Extension.csv, node_id=node_id)
-    if occupancy is not None and latencies is not None:
+    if occupancies is not None and latencies is not None:
         with open(occupancy_file_path, 'a') as file_occupancy:
-            file_occupancy.write(f'{occupancy}\n')
+            file_occupancy.writelines('\n'.join(map(str, occupancies)))
+            file_occupancy.write('\n')
         with open(latency_file_path, 'a') as file_latency:
             file_latency.writelines('\n'.join(map(str, latencies)))
             file_latency.write('\n')
@@ -151,6 +138,7 @@ def histogram(data, scenario_name, metric, simulation_info, node_id):
 
     plt.ylim(min(hist) - 1, max(hist) + 1)
 
+    """
     delta = (bins[1] - bins[0]) / 2
     for i, freq in enumerate(hist):
         if freq > 0:
@@ -159,6 +147,7 @@ def histogram(data, scenario_name, metric, simulation_info, node_id):
             height = min(hist) + 1
             plt.text(bins[i] + delta, height, f'{freq:.4f}%{absolute_str}', ha='center', va='bottom', fontsize=10,
                      rotation=90)
+    """
 
     plt.legend(loc=1)
 
@@ -175,7 +164,7 @@ def histogram(data, scenario_name, metric, simulation_info, node_id):
 def save_max_occupation(args, simulation_info, max_occupation, node_id):
     file = simulation_info.parameters_analysis_file
     with open(file, 'a') as file_writer:
-        file_writer.write(f'{args.rho}, {args.sigma}, {max_occupation}, {node_id}\n')
+        file_writer.write(f'{args.rho}, {args.sigma}, {max_occupation}, {node_id}, {simulation_info.rate}\n')
 
 
 def plot_parameters_analysis(simulation_info):
@@ -197,16 +186,21 @@ def plot_parameters_analysis(simulation_info):
                     variable_parameter = aux_data[:, 1 - index]
                     max_occupations = aux_data[:, 2]
                     node_ids = aux_data[:, 3]
+                    rates = aux_data[:, 4]
                     plt.figure(figsize=(10, 6))
                     plt.plot(variable_parameter, max_occupations, label=file_name)
                     plt.scatter(variable_parameter, max_occupations)
                     for i, value in enumerate(max_occupations):
                         plt.text(variable_parameter[i], value + 0.5,
-                                 f'occupation = {value}\n'
-                                 f'{parameters[1 - index]} = {variable_parameter[i]}\n'
+                                 f'occupation = {int(value)}\n'
+                                 f'rate = {format_bytes(rates[i])}ps\n'
+                                 f'{parameters[1 - index]} = {format_bytes(variable_parameter[i])}\n'
                                  f'node id = {int(node_ids[i])}', fontsize=7,
                                  ha='center', va='bottom')
-                    plt.ylabel('Max occupation')
-                    plt.xlabel(f'{parameters[1 - index]} (bytes)')
+                    locs, labels = plt.xticks()
+                    xticks = [format_bytes(float(value.get_text())) for value in labels]
+                    plt.xticks(locs, xticks)
+                    plt.ylabel('Max occupation (packets)')
+                    plt.xlabel(f'{parameters[1 - index]}')
                     plt.suptitle(f'Fixed {parameter} = {format_bytes(unique)}\n{flows}')
                     plt.savefig(f'{simulation_info.parameters_analysis_path}/{file_name}.{Extension.png}')

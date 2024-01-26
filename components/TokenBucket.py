@@ -57,7 +57,7 @@ class TokenBucket:
                 self.shaper = to_keep
 
     def handle_burst(self, burst):
-        if self.shaper or self.bucket == 0:
+        if self.shaper or self.bucket < burst[0].size:
             self.shaping(burst)
         else:
             to_send, to_keep = split_burst(burst, self.bucket)

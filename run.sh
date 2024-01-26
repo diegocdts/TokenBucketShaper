@@ -1,12 +1,4 @@
-python main.py --flows 100 --mtu 128 --max_time 10 --rho 1000 --sigma 1
-python main.py --flows 100 --mtu 128 --max_time 10 --rho 1000 --sigma 2
-python main.py --flows 100 --mtu 128 --max_time 10 --rho 1000 --sigma 3
-python main.py --flows 100 --mtu 128 --max_time 10 --rho 1000 --sigma 4
 python main.py --flows 100 --mtu 128 --max_time 10 --rho 1000 --sigma 5
-python main.py --flows 100 --mtu 128 --max_time 10 --rho 1000 --sigma 6
-python main.py --flows 100 --mtu 128 --max_time 10 --rho 1000 --sigma 7
-python main.py --flows 100 --mtu 128 --max_time 10 --rho 1000 --sigma 8
-python main.py --flows 100 --mtu 128 --max_time 10 --rho 1000 --sigma 9
 python main.py --flows 100 --mtu 128 --max_time 10 --rho 1000 --sigma 10
 python main.py --flows 100 --mtu 128 --max_time 10 --rho 1000 --sigma 20
 python main.py --flows 100 --mtu 128 --max_time 10 --rho 1000 --sigma 30

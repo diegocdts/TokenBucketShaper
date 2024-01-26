@@ -77,12 +77,12 @@ class Extension(Enum):
 
 
 def build_scenario_name(args, rate):
-    return (f'flows_{args.flows}|'
+    return (f'rate_{format_bytes(rate)}ps|'
+            f'flows_{args.flows}|'
             f'y_{args.lambda_param}|'
             f'rho_{format_bytes(args.rho)}|'
             f'sigma_{format_bytes(args.sigma)}|'
-            f'SLA_{args.delay_sla}s|'
-            f'rate_{format_bytes(rate)}ps')
+            f'SLA_{args.delay_sla}s')
 
 
 def build_rate_file_name(args):

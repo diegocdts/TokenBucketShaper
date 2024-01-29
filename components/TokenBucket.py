@@ -1,7 +1,9 @@
 def split_burst(burst, bucket):
     to_send = []
     while burst and bucket >= burst[0].size:
-        to_send.append(burst.pop(0))
+        packet = burst.pop(0)
+        bucket -= packet.size
+        to_send.append(packet)
     to_keep = burst
     return to_send, to_keep
 
@@ -25,11 +27,11 @@ class PreTokenBucket:
             self.shaper.append(packet)
 
     def send_burst(self):
-        if self.shaper and self.bucket > self.shaper[0].size:
-            to_send, to_keep = split_burst(self.shaper, self.bucket)
-            if to_send:
-                self.token_bucket.handle_burst(to_send)
-                self.shaper = to_keep
+        to_send, to_keep = split_burst(self.shaper, self.bucket)
+        if to_send:
+            self.shaper = to_keep
+            self.bucket -= sum(packet.size for packet in to_send)
+            self.token_bucket.handle_burst(to_send)
 
 
 class TokenBucket:
@@ -50,11 +52,10 @@ class TokenBucket:
         self.empty_shaper()
 
     def empty_shaper(self):
-        if self.shaper and self.bucket >= 0:
-            to_send, to_keep = split_burst(self.shaper, self.bucket)
-            if to_send:
-                self.forward(to_send)
-                self.shaper = to_keep
+        to_send, to_keep = split_burst(self.shaper, self.bucket)
+        if to_send:
+            self.shaper = to_keep
+            self.forward(to_send)
 
     def handle_burst(self, burst):
         if self.shaper or self.bucket < burst[0].size:

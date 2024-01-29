@@ -54,7 +54,7 @@ def get_transmission_queue(args, env):
         new_rate = net_calc_4_rate(args, current_rate)
         rates_list.append(new_rate)
 
-    new_rate = round(new_rate * (args.rate_percentage / 100))
+    new_rate = new_rate * (args.rate_percentage / 100)
 
     simulation_info = SimulationInfo(args, new_rate)
     queue_nodes = get_next_nodes(args, env=env, rate=new_rate)

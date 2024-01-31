@@ -1,11 +1,10 @@
-python main.py --flows 100 --mtu 128 --max_time 15 --rho 1000 --sigma 5
-python main.py --flows 100 --mtu 128 --max_time 15 --rho 1000 --sigma 10
-python main.py --flows 100 --mtu 128 --max_time 15 --rho 1000 --sigma 20
-python main.py --flows 100 --mtu 128 --max_time 15 --rho 1000 --sigma 30
-python main.py --flows 100 --mtu 128 --max_time 15 --rho 1000 --sigma 40
-python main.py --flows 100 --mtu 128 --max_time 15 --rho 1000 --sigma 50
-python main.py --flows 100 --mtu 128 --max_time 15 --rho 1000 --sigma 60
-python main.py --flows 100 --mtu 128 --max_time 15 --rho 1000 --sigma 70
-python main.py --flows 100 --mtu 128 --max_time 15 --rho 1000 --sigma 80
-python main.py --flows 100 --mtu 128 --max_time 15 --rho 1000 --sigma 90
-python main.py --flows 100 --mtu 128 --max_time 15 --rho 1000 --sigma 100
+python main.py --flows 100 --mtu 128 --max_time 15 --lambda_param 100 --rho 100 --sigma 3
+python main.py --flows 100 --mtu 128 --max_time 15 --lambda_param 200 --rho 200 --sigma 3
+python main.py --flows 100 --mtu 128 --max_time 15 --lambda_param 300 --rho 300 --sigma 3
+python main.py --flows 100 --mtu 128 --max_time 15 --lambda_param 400 --rho 400 --sigma 3
+python main.py --flows 100 --mtu 128 --max_time 15 --lambda_param 500 --rho 500 --sigma 3
+python main.py --flows 100 --mtu 128 --max_time 15 --lambda_param 600 --rho 600 --sigma 3
+python main.py --flows 100 --mtu 128 --max_time 15 --lambda_param 700 --rho 700 --sigma 3
+python main.py --flows 100 --mtu 128 --max_time 15 --lambda_param 800 --rho 800 --sigma 3
+python main.py --flows 100 --mtu 128 --max_time 15 --lambda_param 900 --rho 900 --sigma 3
+python main.py --flows 100 --mtu 128 --max_time 15 --lambda_param 1000 --rho 1000 --sigma 3

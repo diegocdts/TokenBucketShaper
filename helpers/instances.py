@@ -42,7 +42,7 @@ def get_token_buckets(args, env, queue_node):
     return token_buckets_list
 
 
-def get_transmission_queue(args, env):
+def get_queue_nodes(args, env):
     current_rate = net_calc_4_rate(args)
     rates_list = [current_rate]
 

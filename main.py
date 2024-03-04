@@ -2,7 +2,7 @@ import random
 import simpy
 
 from helpers.arguments import arguments
-from helpers.instances import get_transmission_queue, get_token_buckets, get_flows, get_uflows
+from helpers.instances import get_queue_nodes, get_token_buckets, get_flows, get_uflows
 from helpers.plots import samplings_as_png, token_buckets_shaper_occupation, plot_parameters_analysis, samplings_as_csv
 from helpers.processes import refill_tokens
 
@@ -16,7 +16,7 @@ if __name__ == "__main__":
     env = simpy.Environment()
 
     # instantiates the token_buckets and flows lists and the transmission queue using the parsed arguments
-    queue_nodes, simulation_info = get_transmission_queue(args, env)
+    queue_nodes, simulation_info = get_queue_nodes(args, env)
     token_buckets = get_token_buckets(args, env, queue_nodes[0])
     flows = get_flows(args, env, token_buckets)
     uflows = get_uflows(args, env, queue_nodes)

@@ -16,7 +16,7 @@ def arguments():
                         help='Total number of flows')
 
     parser.add_argument('--lambda_param',
-                        type=float,
+                        type=int,
                         default=1000,
                         help='The lambda parameter for the expovariate random time inter packets')
 

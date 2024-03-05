@@ -105,16 +105,16 @@ def get_parameters_analysis_path(num_flows, lambda_param):
     return path, file
 
 
-def format_bytes(value):
+def format_bytes(value, decimal_places=2):
     kilobytes_limit = 1000  # 1 KB
     megabytes_limit = 1000 ** 2  # 1 MB
     gigabytes_limit = 1000 ** 3  # 1 GB
 
     if value >= gigabytes_limit:
-        return f"{value / gigabytes_limit:.2f}GB"
+        return f"{value / gigabytes_limit:.{decimal_places}f}GB"
     elif value >= megabytes_limit:
-        return f"{value / megabytes_limit:.2f}MB"
+        return f"{value / megabytes_limit:.{decimal_places}f}MB"
     elif value >= kilobytes_limit:
-        return f"{value / kilobytes_limit:.2f}KB"
+        return f"{value / kilobytes_limit:.{decimal_places}f}KB"
     else:
         return f"{value}B"

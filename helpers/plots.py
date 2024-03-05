@@ -65,6 +65,12 @@ def export_plot_rates(simulation_info, rates_list: np.array):
     y = [rate for rate in rates_list]
     plt.plot(x, y, label=simulation_info.rate_file_name)
 
+    for i, rate in enumerate(y):
+        plt.text(x[i], rate + 1, format_bytes(rate, 10), va='bottom', ha='left', rotation=45, fontsize=8)
+
+    y_ticks = np.linspace(min(rates_list), max(rates_list), 10)
+    y_ticks_labels = [format_bytes(y_tick) for y_tick in y_ticks]
+    plt.yticks(y_ticks, y_ticks_labels)
     plt.xticks(x, x)
     plt.xlabel('Iteration')
     plt.ylabel('Transmission rate (Bytes per sec)')

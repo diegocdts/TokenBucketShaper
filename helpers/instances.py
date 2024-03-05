@@ -58,6 +58,7 @@ def get_queue_nodes(args, env):
 
     if new_rate < sum_rho:
         new_rate = sum_rho
+        rates_list.append(new_rate)
 
     new_rate = new_rate * (args.rate_percentage / 100)
 

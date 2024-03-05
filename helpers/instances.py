@@ -43,6 +43,8 @@ def get_token_buckets(args, env, queue_node):
 
 
 def get_queue_nodes(args, env):
+    sum_rho = args.rho * args.flows
+
     current_rate = net_calc_4_rate(args)
     rates_list = [current_rate]
 
@@ -53,6 +55,9 @@ def get_queue_nodes(args, env):
 
         new_rate = net_calc_4_rate(args, current_rate)
         rates_list.append(new_rate)
+
+    if new_rate < sum_rho:
+        new_rate = sum_rho
 
     new_rate = new_rate * (args.rate_percentage / 100)
 

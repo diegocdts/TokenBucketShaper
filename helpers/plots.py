@@ -24,12 +24,18 @@ def samplings_as_png(args, simulation_info, queue_nodes):
         latency_path = simulation_info.get_file_metric_path(Metric.latency, Extension.csv, node_id=node.id)
         scenario_name = simulation_info.scenario_name
 
-        plot(args, occupancy_path, scenario_name, Metric.occupancy, simulation_info, node_id=node.id)
-        plot(args, latency_path, scenario_name, Metric.latency, simulation_info, node_id=node.id)
+        occupancy_data = np.loadtxt(occupancy_path, delimiter=',')
+        latency_data = np.loadtxt(latency_path, delimiter=',')
+
+        max_occupation = max(occupancy_data)
+        max_latency = max(latency_data)
+        save_max_observation(args, simulation_info, max_occupation, max_latency, node.id)
+
+        plot(args, occupancy_data, occupancy_path, scenario_name, Metric.occupancy, simulation_info, node_id=node.id)
+        plot(args, latency_data, latency_path, scenario_name, Metric.latency, simulation_info, node_id=node.id)
 
 
-def plot(args, file_path, scenario_name, metric, simulation_info, node_id):
-    data = np.loadtxt(file_path, delimiter=',')
+def plot(args, data, file_path, scenario_name, metric, simulation_info, node_id):
 
     plt.figure(figsize=(10, 6))
     x = np.arange(1, len(data) + 1)
@@ -40,9 +46,6 @@ def plot(args, file_path, scenario_name, metric, simulation_info, node_id):
     else:
         plt.ylabel(f'{metric} (packets)')
         plt.xlabel('Sample')
-        # writes the max occupation in the experiment
-        max_occupation = max(data)
-        save_max_occupation(args, simulation_info, max_occupation, node_id)
 
     plt.plot(x, data, label=scenario_name)
     plt.suptitle(simulation_info.file_name)
@@ -160,10 +163,11 @@ def histogram(data, scenario_name, metric, simulation_info, node_id):
     plt.close()
 
 
-def save_max_occupation(args, simulation_info, max_occupation, node_id):
+def save_max_observation(args, simulation_info, max_occupation, max_latency, node_id):
     file = simulation_info.parameters_analysis_file
     with open(file, 'a') as file_writer:
-        file_writer.write(f'{args.rho}, {args.sigma}, {simulation_info.rate}, {node_id}, {max_occupation}\n')
+        file_writer.write(f'{args.rho}, {args.sigma}, {simulation_info.rate}, {node_id}, {max_occupation}, '
+                          f'{max_latency}\n')
 
 
 def plot_parameters_analysis(simulation_info):

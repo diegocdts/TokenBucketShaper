@@ -190,20 +190,35 @@ def plot_parameters_analysis(simulation_info):
                     rates = aux_data[:, 2]
                     node_ids = aux_data[:, 3]
                     max_occupations = aux_data[:, 4]
-                    plt.figure(figsize=(10, 6))
-                    plt.plot(variable_parameter, max_occupations, label=file_name)
-                    plt.scatter(variable_parameter, max_occupations)
-                    for i, value in enumerate(max_occupations):
-                        plt.text(variable_parameter[i], value + 0.01,
-                                 f'OCC = {int(value)}\n'
-                                 f'RT = {format_bytes(rates[i])}ps\n'
-                                 f'{parameters[1 - index]} = {format_bytes(variable_parameter[i])}\n'
-                                 f'NODE = {int(node_ids[i])}', fontsize=7,
-                                 ha='center', va='bottom')
-                    locs, labels = plt.xticks()
-                    xticks = [format_bytes(float(value.get_text())) for value in labels]
-                    plt.xticks(locs, xticks)
-                    plt.ylabel('Max occupation (packets)')
-                    plt.xlabel(f'{parameters[1 - index]}')
-                    plt.suptitle(f'Fixed {parameter} = {format_bytes(unique)}\n{flows}')
-                    plt.savefig(f'{simulation_info.parameters_analysis_path}/{file_name}.{Extension.png}')
+                    max_latencies = aux_data[:, 5]
+                    plot_observations(variable_parameter, max_occupations, rates, parameters, parameter, index,
+                                      node_ids, unique, flows, simulation_info, file_name, Metric.occupancy)
+                    plot_observations(variable_parameter, max_latencies, rates, parameters, parameter, index,
+                                      node_ids, unique, flows, simulation_info, file_name, Metric.latency)
+
+
+def plot_observations(variable_parameter, observations, rates, parameters, parameter, index, node_ids, unique,
+                      flows, simulation_info, file_name, metric):
+    if metric == Metric.occupancy:
+        text_observation = 'OCC'
+        unit = 'packets'
+    else:
+        text_observation = 'LAT'
+        unit = 'seconds'
+    plt.figure(figsize=(10, 6))
+    plt.plot(variable_parameter, observations, label=file_name)
+    plt.scatter(variable_parameter, observations)
+    for i, value in enumerate(observations):
+        plt.text(variable_parameter[i], value,
+                 f'{text_observation} = {value}\n'
+                 f'RT = {format_bytes(rates[i])}ps\n'
+                 f'{parameters[1 - index]} = {format_bytes(variable_parameter[i])}\n'
+                 f'NODE = {int(node_ids[i])}', fontsize=7,
+                 ha='center', va='bottom')
+    locs, labels = plt.xticks()
+    xticks = [format_bytes(float(value.get_text())) for value in labels]
+    plt.xticks(locs, xticks)
+    plt.ylabel(f'Max {metric.value} ({unit})')
+    plt.xlabel(f'{parameters[1 - index]}')
+    plt.suptitle(f'Fixed {parameter} = {format_bytes(unique)}\n{flows}')
+    plt.savefig(f'{simulation_info.parameters_analysis_path}/{file_name} - {metric.value}.{Extension.png}')

@@ -52,6 +52,11 @@ def arguments():
                         default=100,
                         help='The percentage of the calculated rate to be used')
 
+    parser.add_argument('--fixed_rate',
+                        type=float,
+                        default=None,
+                        help='A rate value to keep fixed')
+
     parser.add_argument('--max_time',
                         type=float,
                         default=15,

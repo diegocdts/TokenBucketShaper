@@ -16,12 +16,12 @@ class Packet:
 
 
 class Flow:
-    def __init__(self, env, num_flows, lambda_param, mtu, tokens_per_second, bucket_capacity, token_buckets):
+    def __init__(self, env, num_flows, lambda_param, mtu, bucket_capacity, token_buckets):
         self.env = env
         self.num_flows = num_flows
         self.lambda_param = lambda_param
         self.mtu = mtu
-        self.pre_token_buckets = [PreTokenBucket(env, mtu, tokens_per_second, token_bucket, bucket_capacity)
+        self.pre_token_buckets = [PreTokenBucket(env, mtu, token_bucket, bucket_capacity)
                                   for token_bucket in token_buckets]
         self.action = env.process(self.send_packet())
 

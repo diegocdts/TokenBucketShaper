@@ -21,7 +21,6 @@ def get_flows(args, env, token_buckets):
                 num_flows=args.flows,
                 lambda_param=args.lambda_param,
                 mtu=args.mtu,
-                tokens_per_second=args.rho,
                 bucket_capacity=args.sigma,
                 token_buckets=token_buckets)
     return flow

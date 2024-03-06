@@ -9,22 +9,19 @@ def split_burst(burst, bucket):
 
 
 class PreTokenBucket:
-    def __init__(self, env, mtu, tokens_per_second, token_bucket, bucket_capacity):
+    def __init__(self, env, mtu, token_bucket, bucket_capacity):
         self.env = env
         self.mtu = mtu
-        self.token_bucket = token_bucket
-        self.bucket_capacity = bucket_capacity
         self.bucket = bucket_capacity
+        self.token_bucket = token_bucket
         self.shaper = []
-        self.shaper_capacity = int(tokens_per_second / mtu)
 
     def new_tokens(self):
-        self.bucket = min(self.bucket + self.mtu, self.bucket_capacity)
+        self.bucket = self.bucket + self.mtu
         self.send_burst()
 
     def shaping(self, packet):
-        if self.shaper_capacity > len(self.shaper):
-            self.shaper.append(packet)
+        self.shaper.append(packet)
 
     def send_burst(self):
         to_send, to_keep = split_burst(self.shaper, self.bucket)

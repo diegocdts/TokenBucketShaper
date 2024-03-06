@@ -79,7 +79,7 @@ class Extension(Enum):
 def build_scenario_name(args, rate):
     return (f'rate_{format_bytes(rate)}ps|'
             f'flows_{args.flows}|'
-            f'y_{args.lambda_param}|'
+            f'lambda_{args.lambda_param}|'
             f'rho_{format_bytes(args.rho)}|'
             f'sigma_{format_bytes(args.sigma)}|'
             f'SLA_{args.delay_sla}s')
@@ -99,7 +99,7 @@ def get_parameters_analysis_path(num_flows, lambda_param):
     path = f'{base_dir}/parameters_analysis'
     if not os.path.exists(path):
         os.mkdir(path)
-    file = f'{path}/flows_{num_flows}|y_{lambda_param}.{Extension.csv}'
+    file = f'{path}/flows_{num_flows}|lambda_{lambda_param}.{Extension.csv}'
     with open(file, 'a'):
         pass
     return path, file

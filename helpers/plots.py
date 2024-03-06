@@ -163,7 +163,7 @@ def histogram(data, scenario_name, metric, simulation_info, node_id):
 def save_max_occupation(args, simulation_info, max_occupation, node_id):
     file = simulation_info.parameters_analysis_file
     with open(file, 'a') as file_writer:
-        file_writer.write(f'{args.rho}, {args.sigma}, {max_occupation}, {node_id}, {simulation_info.rate}\n')
+        file_writer.write(f'{args.rho}, {args.sigma}, {simulation_info.rate}, {node_id}, {max_occupation}\n')
 
 
 def plot_parameters_analysis(simulation_info):
@@ -183,14 +183,14 @@ def plot_parameters_analysis(simulation_info):
                     aux_data = data[indices]
                     aux_data = aux_data[np.argsort(aux_data[:, 1 - index])]
                     variable_parameter = aux_data[:, 1 - index]
-                    max_occupations = aux_data[:, 2]
+                    rates = aux_data[:, 2]
                     node_ids = aux_data[:, 3]
-                    rates = aux_data[:, 4]
+                    max_occupations = aux_data[:, 4]
                     plt.figure(figsize=(10, 6))
                     plt.plot(variable_parameter, max_occupations, label=file_name)
                     plt.scatter(variable_parameter, max_occupations)
                     for i, value in enumerate(max_occupations):
-                        plt.text(variable_parameter[i], value + 0.5,
+                        plt.text(variable_parameter[i], value + 0.01,
                                  f'OCC = {int(value)}\n'
                                  f'RT = {format_bytes(rates[i])}ps\n'
                                  f'{parameters[1 - index]} = {format_bytes(variable_parameter[i])}\n'

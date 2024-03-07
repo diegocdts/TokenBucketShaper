@@ -59,8 +59,8 @@ class Visualization:
                 pdf *= area_total_hist / area_total_pdf
                 plt.plot(x, pdf, label=distribution.name)
 
-            plt.title(f'{self.metric.value.capitalize()} histogram\n'
-                      f'Best distribution: {distributions[0].name}')
+            plt.title(f'{experiment_name}\n'
+                      f'Best distribution: {distributions[0].name}', fontsize=11)
             plt.legend(loc='best')
         plt.xlabel(self.metric)
         plt.ylabel('Frequency (%)')

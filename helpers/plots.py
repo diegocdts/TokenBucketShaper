@@ -135,10 +135,7 @@ def histogram(data, scenario_name, metric, simulation_info, node_id):
     else:
         num_bins = np.arange(min(data), max(data) + 2) - 0.5
 
-    hist, bins, patches = plt.hist(data, bins=num_bins, weights=np.ones(len(data)) / len(data) * 100,
-                                   label=scenario_name)
-
-    plt.ylim(min(hist) - 1, max(hist) + 1)
+    plt.hist(data, bins=num_bins, weights=np.ones(len(data)) / len(data) * 100, label=scenario_name)
 
     """
     delta = (bins[1] - bins[0]) / 2

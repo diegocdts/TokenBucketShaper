@@ -19,12 +19,12 @@ class Analysis:
             stats.genextreme,   # GEV
             stats.rayleigh,     # Rayleigh
             stats.poisson,      # Poisson
-            #stats.beta,         # Beta
+            # stats.beta,        # Beta
         ]
         self.aic_values = []
 
-    def load_data(self, experiment_name, metric):
-        path = f'outputs/{experiment_name}/{metric.value}'
+    def load_data(self, experiment_name, node, metric):
+        path = f'outputs/{experiment_name}/node_{node}/{metric.value}'
         files = os.listdir(path)
         files = [file for file in files if file.endswith('.csv')]
 
@@ -37,8 +37,6 @@ class Analysis:
         for distribution in self.distributions:
             print(distribution.name)
             data = np.array(self.data)
-            if distribution.name == 'lognorm' or 'rayleigh':
-                data = data + 0.001
             if distribution.name == 'poisson':
                 params = np.mean(data)
                 log_likelihood = np.sum(stats.poisson.logpmf(data, params))

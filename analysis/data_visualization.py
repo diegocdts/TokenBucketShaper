@@ -1,8 +1,17 @@
+import os.path
+
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as stats
 
 from helpers.outputs import Metric
+
+outputs_analysis = 'outputs_analysis'
+
+
+def create_outputs_analysis():
+    if not os.path.exists(outputs_analysis):
+        os.mkdir(outputs_analysis)
 
 
 class Visualization:
@@ -15,8 +24,9 @@ class Visualization:
         """
         self.metric = metric
         self.data = data
+        create_outputs_analysis()
 
-    def histogram(self, distribution, plot_distribution_curve=False):
+    def histogram(self, experiment_name, distributions, plot_distribution_curve=False):
         """
         Generates histogram visualization
         """
@@ -30,23 +40,27 @@ class Visualization:
         counts, bins, _ = plt.hist(self.data, bins=num_bins, density=False, weights=weights)
 
         if plot_distribution_curve:
-            params = distribution.fit(self.data)
-            print(params)
+            for distribution in distributions:
+                params = distribution.fit(self.data)
+                print(params)
 
-            x_min, x_max = plt.xlim()
-            x = np.linspace(x_min, x_max, 1000)
-            pdf = distribution.pdf(x, *params)
+                x_min, x_max = min(self.data), max(self.data)
+                x = np.linspace(x_min, x_max, 1000)
+                pdf = distribution.pdf(x, *params)
 
-            # pdf normalization
-            area_total_hist = np.sum(np.diff(bins) * counts)
-            area_total_pdf = np.trapz(pdf, x)
-            pdf *= area_total_hist / area_total_pdf
+                # pdf normalization
+                area_total_hist = np.sum(np.diff(bins) * counts)
+                area_total_pdf = np.trapz(pdf, x)
+                pdf *= area_total_hist / area_total_pdf
+                plt.plot(x, pdf, label=distribution.name)
 
-            plt.plot(x, pdf, 'r-')
-            plt.title(f'Histogram\nBest distribution: {distribution.name}')
+            plt.title(f'{self.metric.value.capitalize()} histogram\n'
+                      f'Best distribution: {distributions[0].name}')
+            plt.legend(loc='best')
         plt.xlabel(self.metric)
         plt.ylabel('Frequency (%)')
-        plt.show()
+        plt.savefig(f'{outputs_analysis}/{experiment_name} - {self.metric.value}.png')
+        plt.close()
 
     def qq_plot(self):
         """

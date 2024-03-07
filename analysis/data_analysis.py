@@ -33,7 +33,7 @@ class Analysis:
             self.data = self.data + data
         self.data = np.array(self.data)
 
-    def best_distribution(self):
+    def score_distributions(self):
         for distribution in self.distributions:
             print(distribution.name)
             data = np.array(self.data)
@@ -47,10 +47,12 @@ class Analysis:
                 num_params = len(params)
             aic = 2 * num_params - 2 * log_likelihood
             self.aic_values.append(aic)
-        return self.distributions[np.argmin(self.aic_values)]
 
     def sort_distributions_by_aic(self):
+        sorted_distributions = []
         place = 1
         for index in np.argsort(self.aic_values):
+            sorted_distributions.append(self.distributions[index])
             print(place, self.distributions[index].name)
             place += 1
+        return sorted_distributions

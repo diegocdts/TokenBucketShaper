@@ -25,18 +25,24 @@ class Visualization:
         else:
             num_bins = np.arange(min(self.data), max(self.data) + 2) - 0.5
 
-        if distribution.name == 'lognorm' or 'rayleigh':
-            self.data = self.data + 0.001
+        weights = np.ones(len(self.data)) / len(self.data) * 100
 
-        plt.hist(self.data, bins=num_bins, weights=np.ones(len(self.data)) / len(self.data) * 100)
+        counts, bins, _ = plt.hist(self.data, bins=num_bins, density=False, weights=weights)
 
         if plot_distribution_curve:
             params = distribution.fit(self.data)
             print(params)
-            x = np.arange(min(self.data), max(self.data) + 1)
+
+            x_min, x_max = plt.xlim()
+            x = np.linspace(x_min, x_max, 1000)
             pdf = distribution.pdf(x, *params)
-            percentual_frequency = pdf / np.sum(pdf) * 100
-            plt.plot(x, percentual_frequency, 'r-')
+
+            # pdf normalization
+            area_total_hist = np.sum(np.diff(bins) * counts)
+            area_total_pdf = np.trapz(pdf, x)
+            pdf *= area_total_hist / area_total_pdf
+
+            plt.plot(x, pdf, 'r-')
             plt.title(f'Histogram\nBest distribution: {distribution.name}')
         plt.xlabel(self.metric)
         plt.ylabel('Frequency (%)')

@@ -18,8 +18,6 @@ class Analysis:
             stats.weibull_max,  # Weibull Max
             stats.genextreme,   # GEV
             stats.rayleigh,     # Rayleigh
-            stats.poisson,      # Poisson
-            # stats.beta,        # Beta
         ]
         self.aic_values = []
 

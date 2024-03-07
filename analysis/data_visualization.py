@@ -45,10 +45,12 @@ class Visualization:
                 print(params)
 
                 x_min, x_max = min(self.data), max(self.data)
-                x = np.linspace(x_min, x_max, len(self.data))
-                if distribution.name == 'gamma':
+                x = np.linspace(x_min, x_max, 1000)
+                if (distribution.name == 'gamma'
+                        or distribution.name == 'weibull_min'
+                        or distribution.name == 'weibull_max'):
                     x = np.linspace(distribution.ppf(0.01, *params),
-                                    distribution.ppf(0.99, *params), len(self.data))
+                                    distribution.ppf(0.99, *params), 1000)
                 pdf = distribution.pdf(x, *params)
 
                 # pdf normalization

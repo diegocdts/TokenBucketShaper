@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 
 from helpers.outputs import Metric, Extension, format_bytes
 
+fontsize = 12
+
 
 def samplings_as_csv(simulation_info, queue_nodes):
     for node in queue_nodes:
@@ -41,16 +43,18 @@ def plot(args, data, file_path, scenario_name, metric, simulation_info, node_id)
     x = np.arange(1, len(data) + 1)
 
     if metric == Metric.latency:
-        plt.ylabel(f'{metric} (seconds)')
-        plt.xlabel('Packet')
+        plt.ylabel(f'{metric} (seconds)', fontsize=fontsize)
+        plt.xlabel('Packet', fontsize=fontsize)
     else:
-        plt.ylabel(f'{metric} (packets)')
-        plt.xlabel('Sample')
+        plt.ylabel(f'{metric} (packets)', fontsize=fontsize)
+        plt.xlabel('Sample', fontsize=fontsize)
 
     plt.plot(x, data, label=scenario_name)
-    plt.suptitle(simulation_info.file_name)
+    plt.suptitle(simulation_info.scenario_name)
+    plt.xticks(fontsize=fontsize)
+    plt.yticks(fontsize=fontsize)
 
-    plt.legend(loc=5)
+    plt.legend(loc=5, fontsize=fontsize)
 
     plt.savefig(file_path.replace('csv', 'png'))
     plt.close()
@@ -69,15 +73,17 @@ def export_plot_rates(simulation_info, rates_list: np.array):
     plt.plot(x, y, label=simulation_info.rate_file_name)
 
     for i, rate in enumerate(y):
-        plt.text(x[i], rate + 1, format_bytes(rate, 10), va='bottom', ha='left', rotation=45, fontsize=8)
+        plt.text(x[i], rate + 1, format_bytes(rate, 5), va='bottom', ha='left', rotation=45, fontsize=fontsize)
 
     y_ticks = np.linspace(min(rates_list), max(rates_list), 10)
     y_ticks_labels = [format_bytes(y_tick) for y_tick in y_ticks]
-    plt.yticks(y_ticks, y_ticks_labels)
-    plt.xticks(x, x)
-    plt.xlabel('Iteration')
-    plt.ylabel('Transmission rate (Bytes per sec)')
-    plt.legend(loc=5)
+    plt.yticks(y_ticks, y_ticks_labels, fontsize=fontsize)
+    plt.xticks(x, x, fontsize=fontsize)
+    plt.xlabel('Iteration', fontsize=fontsize)
+    plt.ylabel('Transmission rate (Bytes per sec)', fontsize=fontsize)
+    plt.legend(loc=5, fontsize=fontsize)
+
+    plt.suptitle(simulation_info.scenario_name)
 
     plt.savefig(simulation_info.get_file_metric_path(Metric.rate, Extension.png))
     plt.close()
@@ -98,9 +104,11 @@ def token_buckets_shaper_occupation(token_buckets, simulation_info):
         plt.xlim(1, len(occupations))
         plt.ylim(0, token_buckets[0].shaper_capacity + 1)
 
-        plt.xlabel('Token bucket shaper')
-        plt.ylabel('Max occupation observed')
-        plt.suptitle(simulation_info.file_name)
+        plt.xlabel('Token bucket shaper', fontsize=fontsize)
+        plt.ylabel('Max occupation observed', fontsize=fontsize)
+        plt.suptitle(simulation_info.scenario_name)
+        plt.xticks(fontsize=fontsize)
+        plt.yticks(fontsize=fontsize)
 
         plt.savefig(simulation_info.get_file_metric_path(Metric.shaper, Extension.png))
         plt.close()
@@ -114,12 +122,14 @@ def cdf(data, scenario_name, metric, simulation_info, node_id):
     plt.plot(data, cdf_data, marker='o', linestyle='-', label=scenario_name)
 
     if metric == Metric.latency:
-        plt.xlabel('Latency')
+        plt.xlabel('Latency', fontsize=fontsize)
     else:
-        plt.xlabel('Occupancy')
-    plt.ylabel('Cumulative Probability')
-    plt.suptitle(simulation_info.file_name)
-    plt.legend(loc=5)
+        plt.xlabel('Occupancy', fontsize=fontsize)
+    plt.ylabel('Cumulative Probability', fontsize=fontsize)
+    plt.suptitle(simulation_info.scenario_name)
+    plt.xticks(fontsize=fontsize)
+    plt.yticks(fontsize=fontsize)
+    plt.legend(loc=5, fontsize=fontsize)
     plt.grid(True)
 
     extra = f'{metric} - '
@@ -148,11 +158,13 @@ def histogram(data, scenario_name, metric, simulation_info, node_id):
                      rotation=90)
     """
 
-    plt.legend(loc=1)
+    plt.legend(loc=1, fontsize=fontsize)
 
-    plt.xlabel(metric)
-    plt.ylabel('Frequency (%)')
-    plt.suptitle(simulation_info.file_name)
+    plt.xlabel(metric, fontsize=fontsize)
+    plt.ylabel('Frequency (%)', fontsize=fontsize)
+    plt.suptitle(simulation_info.scenario_name)
+    plt.xticks(fontsize=fontsize)
+    plt.yticks(fontsize=fontsize)
 
     extra = f'{metric} - '
 
@@ -210,7 +222,7 @@ def plot_observations(variable_parameter, observations, rates, parameters, param
                  f'{text_observation} = {value}\n'
                  f'RT = {format_bytes(rates[i])}ps\n'
                  f'{parameters[1 - index]} = {format_bytes(variable_parameter[i])}\n'
-                 f'NODE = {int(node_ids[i])}', fontsize=7,
+                 f'NODE = {int(node_ids[i])}', fontsize=fontsize,
                  ha='center', va='bottom')
     locs, labels = plt.xticks()
     xticks = [format_bytes(float(value.get_text())) for value in labels]

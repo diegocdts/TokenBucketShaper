@@ -81,6 +81,11 @@ def arguments():
                         help='The lambda parameter for the expovariate random time inter packets of the uncontrolled '
                              'flows')
 
+    parser.add_argument('--sampling_interval',
+                        type=float,
+                        default=0.001,
+                        help='The interval used to sample the queue nodes')
+
     args = parser.parse_args()
 
     args.rho = args.rho * args.mtu

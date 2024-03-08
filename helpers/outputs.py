@@ -48,9 +48,7 @@ class SimulationInfo:
                     os.mkdir(metric_path)
 
     def get_file_metric_path(self, metric, extension, node_id='', extra=''):
-        if metric == Metric.latency or metric == Metric.occupancy:
-            return f'{self.scenario_path}/{node_directory(node_id)}/{metric}/{self.file_name}.{extension}'
-        elif metric == Metric.histogram or metric == Metric.cdf:
+        if metric == Metric.latency or metric == Metric.occupancy or metric == Metric.histogram or metric == Metric.cdf:
             return f'{self.scenario_path}/{node_directory(node_id)}/{metric}/{extra}{self.file_name}.{extension}'
         else:
             return f'{self.scenario_path}/{metric}/{self.file_name}.{extension}'

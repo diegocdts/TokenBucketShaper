@@ -81,7 +81,7 @@ def export_plot_rates(simulation_info, rates_list: np.array):
     plt.xticks(x, x, fontsize=fontsize)
     plt.xlabel('Iteration', fontsize=fontsize)
     plt.ylabel('Transmission rate (Bytes per sec)', fontsize=fontsize)
-    plt.legend(loc=5, fontsize=fontsize)
+    plt.legend(loc=2, fontsize=fontsize)
 
     plt.suptitle(simulation_info.scenario_name)
 

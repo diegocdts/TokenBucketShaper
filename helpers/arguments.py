@@ -39,7 +39,7 @@ def arguments():
 
     parser.add_argument('--delay_sla',
                         type=float,
-                        default=0.01,
+                        default=0.001,
                         help='The SLA delay')
 
     parser.add_argument('--mtu',

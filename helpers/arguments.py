@@ -57,6 +57,11 @@ def arguments():
                         default=None,
                         help='A rate value to keep fixed')
 
+    parser.add_argument('--minus_percent_rate',
+                        type=float,
+                        default=0,
+                        help='A percentage of the rate to be subtracted. Default 0')
+
     parser.add_argument('--max_time',
                         type=float,
                         default=15,
@@ -86,7 +91,15 @@ def arguments():
                         default=0.001,
                         help='The interval used to sample the queue nodes')
 
+    parser.add_argument('--lambda_plus_sigma',
+                        type=bool,
+                        default=False,
+                        help='If True the sigma value is added to the lambda_param. Default. False')
+
     args = parser.parse_args()
+
+    if args.lambda_plus_sigma or args.lambda_plus_sigma == 'True':
+        args.lambda_param = args.lambda_param + args.sigma
 
     args.rho = args.rho * args.mtu
 

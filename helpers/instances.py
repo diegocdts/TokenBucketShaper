@@ -67,6 +67,10 @@ def get_queue_nodes(args, env):
 
     new_rate = new_rate * (args.rate_percentage / 100)
 
+    if args.minus_percent_rate > 0.0:
+        to_subtract = new_rate * (args.minus_percent_rate / 100)
+        new_rate -= to_subtract
+
     simulation_info = SimulationInfo(args, new_rate)
     queue_nodes = get_next_nodes(args, env=env, rate=new_rate)
 

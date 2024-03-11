@@ -49,7 +49,7 @@ def plot(args, data, file_path, scenario_name, metric, simulation_info, node_id)
         plt.ylabel(f'{metric} (packets)', fontsize=fontsize)
         plt.xlabel('Sample', fontsize=fontsize)
 
-    plt.plot(x, data, label=scenario_name)
+    plt.vlines(x, ymin=0, ymax=data, label=scenario_name)
     plt.suptitle(simulation_info.scenario_name)
     plt.xticks(fontsize=fontsize)
     plt.yticks(fontsize=fontsize)

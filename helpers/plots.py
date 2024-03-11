@@ -139,7 +139,7 @@ def cdf(data, scenario_name, metric, simulation_info, node_id):
 
 
 def histogram(data, scenario_name, metric, simulation_info, node_id):
-    plt.figure(figsize=(15, 7))
+    plt.figure(figsize=(10, 6))
     if metric == Metric.latency:
         num_bins = 15
     else:

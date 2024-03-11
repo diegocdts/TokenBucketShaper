@@ -228,3 +228,4 @@ def plot_observations(variable_parameter, observations, rates, parameters, param
     plt.xlabel(f'{parameters[1 - index]}')
     plt.suptitle(f'Fixed {parameter} = {format_bytes(unique)}\n{flows}')
     plt.savefig(f'{simulation_info.parameters_analysis_path}/{file_name} - {metric.value}.{Extension.png}')
+    plt.close()

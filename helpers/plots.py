@@ -89,7 +89,7 @@ def export_plot_rates(simulation_info, rates_list: np.array):
     plt.close()
 
 
-def token_buckets_shaper_occupation(token_buckets, simulation_info):
+def token_buckets_shaper_occupation(token_buckets, simulation_info, extra=''):
     print('Preparing the token buckets shaper occupation plot')
     occupations = sorted([tb.max_shaper_occupancy for tb in token_buckets])
     [tb.__setattr__('max_shaper_occupancy', 0) for tb in token_buckets]
@@ -97,20 +97,19 @@ def token_buckets_shaper_occupation(token_buckets, simulation_info):
 
     if max(occupations) > 0:
         plt.figure(figsize=(10, 6))
-        plt.vlines(shapers, ymin=0, ymax=occupations, colors='b', linewidth=2, label=simulation_info.scenario_name)
+        plt.vlines(shapers, ymin=0, ymax=occupations, colors='b', linewidth=2, label=f'{extra}{simulation_info.scenario_name}')
 
         plt.legend(loc=5)
 
         plt.xlim(1, len(occupations))
-        plt.ylim(0, token_buckets[0].shaper_capacity + 1)
 
         plt.xlabel('Token bucket shaper', fontsize=fontsize)
         plt.ylabel('Max occupation observed', fontsize=fontsize)
-        plt.suptitle(simulation_info.scenario_name)
+        plt.suptitle(f'{extra}{simulation_info.scenario_name}')
         plt.xticks(fontsize=fontsize)
         plt.yticks(fontsize=fontsize)
 
-        plt.savefig(simulation_info.get_file_metric_path(Metric.shaper, Extension.png))
+        plt.savefig(simulation_info.get_file_metric_path(Metric.shaper, Extension.png, extra=extra))
         plt.close()
 
 

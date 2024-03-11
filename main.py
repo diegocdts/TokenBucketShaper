@@ -33,4 +33,5 @@ if __name__ == "__main__":
     samplings_as_csv(simulation_info, queue_nodes)
     samplings_as_png(args, simulation_info, queue_nodes)
     token_buckets_shaper_occupation(token_buckets, simulation_info)
+    token_buckets_shaper_occupation(flows.pre_token_buckets, simulation_info, extra='Pre TB - ')
     plot_parameters_analysis(simulation_info)

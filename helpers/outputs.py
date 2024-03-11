@@ -51,7 +51,7 @@ class SimulationInfo:
         if metric == Metric.latency or metric == Metric.occupancy or metric == Metric.histogram or metric == Metric.cdf:
             return f'{self.scenario_path}/{node_directory(node_id)}/{metric}/{extra}{self.file_name}.{extension}'
         else:
-            return f'{self.scenario_path}/{metric}/{self.file_name}.{extension}'
+            return f'{self.scenario_path}/{metric}/{extra}{self.file_name}.{extension}'
 
 
 class Metric(Enum):

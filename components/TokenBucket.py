@@ -16,6 +16,7 @@ class PreTokenBucket:
         self.bucket_capacity = bucket_capacity
         self.token_bucket = token_bucket
         self.shaper = []
+        self.max_shaper_occupancy = 0
 
     def new_tokens(self):
         self.bucket = min(self.bucket + self.mtu, self.bucket_capacity)
@@ -23,6 +24,8 @@ class PreTokenBucket:
 
     def shaping(self, packet):
         self.shaper.append(packet)
+        if len(self.shaper) > self.max_shaper_occupancy:
+            self.max_shaper_occupancy = len(self.shaper)
 
     def send_burst(self):
         to_send, to_keep = split_burst(self.shaper, self.bucket)

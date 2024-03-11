@@ -13,11 +13,12 @@ class PreTokenBucket:
         self.env = env
         self.mtu = mtu
         self.bucket = bucket_capacity
+        self.bucket_capacity = bucket_capacity
         self.token_bucket = token_bucket
         self.shaper = []
 
     def new_tokens(self):
-        self.bucket = self.bucket + self.mtu
+        self.bucket = min(self.bucket + self.mtu, self.bucket_capacity)
         self.send_burst()
 
     def shaping(self, packet):

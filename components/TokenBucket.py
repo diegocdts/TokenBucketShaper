@@ -19,7 +19,7 @@ class PreTokenBucket:
         self.max_shaper_occupancy = 0
 
     def new_tokens(self):
-        self.bucket = min(self.bucket + self.mtu, self.bucket_capacity)
+        self.bucket = self.bucket + self.mtu
         self.send_burst()
 
     def shaping(self, packet):

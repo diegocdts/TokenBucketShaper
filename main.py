@@ -25,6 +25,8 @@ if __name__ == "__main__":
     env.process(refill_tokens(env, mtu=args.mtu, tokens_per_second=args.rho, token_buckets=flows.pre_token_buckets))
     env.process(refill_tokens(env, mtu=args.mtu, tokens_per_second=args.rho, token_buckets=token_buckets))
 
+    #env.process(sampling_by_time(env, args.sampling_interval, simulation_info, queue_nodes))
+
     # runs the simpy processes
     env.run(until=args.max_time)
 

@@ -19,7 +19,7 @@ def samplings_as_csv(simulation_info, queue_nodes):
         np.savetxt(latency_file_path, latencies, delimiter=',')
 
 
-def samplings_as_png(args, simulation_info, queue_nodes):
+def samplings_as_png(args, simulation_info, queue_nodes, extra=''):
     for node in queue_nodes:
         print(f'Preparing the plots for Node {node.id}')
         occupancy_path = simulation_info.get_file_metric_path(Metric.occupancy, Extension.csv, node_id=node.id)
@@ -33,11 +33,18 @@ def samplings_as_png(args, simulation_info, queue_nodes):
         max_latency = max(latency_data)
         save_max_observation(args, simulation_info, max_occupation, max_latency, node.id)
 
-        plot(args, occupancy_data, occupancy_path, scenario_name, Metric.occupancy, simulation_info, node_id=node.id)
-        plot(args, latency_data, latency_path, scenario_name, Metric.latency, simulation_info, node_id=node.id)
+        plot(occupancy_data, occupancy_path, scenario_name, Metric.occupancy, simulation_info, node_id=node.id)
+        plot(latency_data, latency_path, scenario_name, Metric.latency, simulation_info, node_id=node.id)
+
+        if len(extra) > 0:
+            occupancy_path = simulation_info.get_file_metric_path(Metric.occupancy, Extension.csv, node_id=node.id,
+                                                                  extra=extra)
+            occupancy_data = np.loadtxt(occupancy_path, delimiter=',')
+            plot(occupancy_data, occupancy_path, scenario_name, Metric.occupancy, simulation_info, node_id=node.id,
+                 extra=f'{extra} - ')
 
 
-def plot(args, data, file_path, scenario_name, metric, simulation_info, node_id):
+def plot(data, file_path, scenario_name, metric, simulation_info, node_id, extra=''):
 
     plt.figure(figsize=(10, 6))
     x = np.arange(1, len(data) + 1)
@@ -59,8 +66,8 @@ def plot(args, data, file_path, scenario_name, metric, simulation_info, node_id)
     plt.savefig(file_path.replace('csv', 'png'))
     plt.close()
 
-    histogram(data, scenario_name, metric, simulation_info, node_id)
-    cdf(data, scenario_name, metric, simulation_info, node_id)
+    histogram(data, scenario_name, metric, simulation_info, node_id, extra)
+    cdf(data, scenario_name, metric, simulation_info, node_id, extra)
 
 
 def export_plot_rates(simulation_info, rates_list: np.array):
@@ -111,7 +118,7 @@ def token_buckets_shaper_occupation(token_buckets, simulation_info, extra=''):
     plt.close()
 
 
-def cdf(data, scenario_name, metric, simulation_info, node_id):
+def cdf(data, scenario_name, metric, simulation_info, node_id, extra):
     data = sorted(data)
     cdf_data = np.arange(1, len(data) + 1) / len(data)
 
@@ -129,13 +136,13 @@ def cdf(data, scenario_name, metric, simulation_info, node_id):
     plt.legend(loc=5, fontsize=fontsize)
     plt.grid(True)
 
-    extra = f'{metric} - '
+    extra = f'{metric} - {extra}'
 
     plt.savefig(simulation_info.get_file_metric_path(Metric.cdf, Extension.png, node_id=node_id, extra=extra))
     plt.close()
 
 
-def histogram(data, scenario_name, metric, simulation_info, node_id):
+def histogram(data, scenario_name, metric, simulation_info, node_id, extra):
     plt.figure(figsize=(10, 6))
     if metric == Metric.latency:
         num_bins = 15
@@ -163,7 +170,7 @@ def histogram(data, scenario_name, metric, simulation_info, node_id):
     plt.xticks(fontsize=fontsize)
     plt.yticks(fontsize=fontsize)
 
-    extra = f'{metric} - '
+    extra = f'{metric} - {extra}'
 
     plt.savefig(simulation_info.get_file_metric_path(Metric.histogram, Extension.png, node_id=node_id, extra=extra))
     plt.close()

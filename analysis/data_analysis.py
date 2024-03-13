@@ -20,6 +20,7 @@ class Analysis:
             stats.rayleigh,     # Rayleigh
         ]
         self.aic_values = []
+        self.distributions_map = []
 
     def load_data(self, experiment_name, node, metric):
         path = f'outputs/{experiment_name}/node_{node}/{metric.value}'
@@ -45,12 +46,11 @@ class Analysis:
                 num_params = len(params)
             aic = 2 * num_params - 2 * log_likelihood
             self.aic_values.append(aic)
+            distribution_info = [distribution, aic, params]
+            self.distributions_map.append(distribution_info)
 
     def sort_distributions_by_aic(self):
-        sorted_distributions = []
-        place = 1
-        for index in np.argsort(self.aic_values):
-            sorted_distributions.append(self.distributions[index])
-            print(place, self.distributions[index].name)
-            place += 1
+        self.distributions_map = np.array(self.distributions_map, dtype=object)
+        indexes = np.argsort(self.distributions_map[:, 1])
+        sorted_distributions = self.distributions_map[indexes]
         return sorted_distributions

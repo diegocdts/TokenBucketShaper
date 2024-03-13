@@ -12,10 +12,11 @@ def run(experiment_name, node, metric):
     sorted_distributions = analysis.sort_distributions_by_aic()
 
     visualization = Visualization(analysis.data, metric)
-    visualization.histogram(experiment_name, sorted_distributions[:3], True)
+    visualization.histogram(experiment_name, sorted_distributions[:5], True)
 
 
 scenarios = [scenario for scenario in sorted(os.listdir('outputs/')) if scenario.startswith('rate')]
 
 for scenario in scenarios:
+    print(scenario)
     run(scenario, 0, Metric.occupancy)

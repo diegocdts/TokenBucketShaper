@@ -26,7 +26,7 @@ class Visualization:
         self.data = data
         create_outputs_analysis()
 
-    def histogram(self, experiment_name, distributions, plot_distribution_curve=False):
+    def histogram(self, experiment_name, distributions_map, plot_distribution_curve=False):
         """
         Generates histogram visualization
         """
@@ -40,12 +40,14 @@ class Visualization:
         counts, bins, _ = plt.hist(self.data, bins=num_bins, density=False, weights=weights)
 
         if plot_distribution_curve:
-            for distribution in distributions:
-                params = distribution.fit(self.data)
+            for distribution_info in distributions_map:
+                params = distribution_info[2]
                 print(params)
 
                 x_min, x_max = min(self.data), max(self.data)
                 x = np.linspace(x_min, x_max, 1000)
+                distribution = distribution_info[0]
+                aic = distribution_info[1]
                 if (distribution.name == 'gamma'
                         or distribution.name == 'weibull_min'
                         or distribution.name == 'weibull_max'):
@@ -57,10 +59,9 @@ class Visualization:
                 area_total_hist = np.sum(np.diff(bins) * counts)
                 area_total_pdf = np.trapz(pdf, x)
                 pdf *= area_total_hist / area_total_pdf
-                plt.plot(x, pdf, label=distribution.name)
+                plt.plot(x, pdf, label=f'{distribution.name} - aic: {aic}')
 
-            plt.title(f'{experiment_name}\n'
-                      f'Best distribution: {distributions[0].name}', fontsize=11)
+            plt.title(f'{experiment_name}', fontsize=11)
             plt.legend(loc='best')
         plt.xlabel(self.metric)
         plt.ylabel('Frequency (%)')

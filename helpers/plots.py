@@ -61,7 +61,7 @@ def plot(data, file_path, scenario_name, metric, simulation_info, node_id, extra
     plt.xticks(fontsize=fontsize)
     plt.yticks(fontsize=fontsize)
 
-    plt.legend(loc=5, fontsize=fontsize)
+    plt.legend(loc=4, fontsize=fontsize)
 
     plt.savefig(file_path.replace('csv', 'png'))
     plt.close()

@@ -64,7 +64,7 @@ def arguments():
 
     parser.add_argument('--max_time',
                         type=float,
-                        default=15,
+                        default=5,
                         help='Maximum program execution time (in seconds)')
 
     parser.add_argument('--num_queue_nodes',

@@ -8,6 +8,7 @@ from helpers.outputs import Metric
 
 outputs_analysis = 'outputs_analysis'
 
+fontsize=12
 
 def create_outputs_analysis():
     if not os.path.exists(outputs_analysis):
@@ -30,6 +31,7 @@ class Visualization:
         """
         Generates histogram visualization
         """
+        plt.figure(figsize=(10, 6))
         if self.metric == Metric.latency:
             num_bins = self.bins_for_latency()
         else:
@@ -61,8 +63,8 @@ class Visualization:
                 pdf *= area_total_hist / area_total_pdf
                 plt.plot(x, pdf, label=f'{distribution.name} - aic: {aic}')
 
-            plt.title(f'{experiment_name}', fontsize=11)
-            plt.legend(loc='best')
+            plt.suptitle(f'{experiment_name}', fontsize=fontsize)
+            plt.legend(loc='best', fontsize=fontsize)
         plt.xlabel(self.metric)
         plt.ylabel('Frequency (%)')
         plt.savefig(f'{outputs_analysis}/{experiment_name} - {self.metric.value}.png')

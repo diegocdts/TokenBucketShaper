@@ -15,12 +15,28 @@
 # 5
 # 10
 
-#python main.py --flows 100 --lambda_param 1000 --rho 1000 --sigma 2
+# lambda ≤ R / (N * mtu)
 
-# lambda abaixo do calculado
-#python main.py --fixed_rate 26000000.00 --flows 100 --rho 2000 --sigma 5 --lambda_param 2015 #lambda_param max = 2025 # rho < lambda
-#python main.py --fixed_rate 26000000.00 --flows 100 --rho 3000 --sigma 5 --lambda_param 2015 #lambda_param max = 2025 # rho > lambda
+# base
+# python main.py --flows 100 --lambda_param 1000 --rho 1000 --sigma 2
 
-# lambda acima do calculado
-python main.py --fixed_rate 26000000.00 --flows 100 --rho 2000 --sigma 5 --lambda_param 2035 #lambda_param max = 2025 # rho < lambda
-python main.py --fixed_rate 26000000.00 --flows 100 --rho 3000 --sigma 5 --lambda_param 2035 #lambda_param max = 2025 # rho > lambda
+# lambda inferior e superior ao calculado (2031)
+# python main.py --flows 100 --lambda_param 2025 --rho 2125 --sigma 5 --fixed_rate 26000000
+# python main.py --flows 100 --lambda_param 2050 --rho 2150 --sigma 5 --fixed_rate 26000000
+
+# lambda = rho
+# python main.py --flows 100 --lambda_param 2025 --rho 2025 --sigma 5 --fixed_rate 26000000
+# python main.py --flows 100 --lambda_param 2050 --rho 2050 --sigma 5 --fixed_rate 26000000
+
+# sigma = 10
+# python main.py --flows 100 --lambda_param 2025 --rho 2125 --sigma 10 --fixed_rate 26000000
+
+# número de fluxos = 1000
+# base
+python main.py --flows 1000 --lambda_param 1000 --rho 1000 --sigma 2
+
+# lambda inferior ao calculado
+python main.py --flows 1000 --lambda_param 2025 --rho 2125 --sigma 5 --fixed_rate 260000000
+
+# sigma = 10
+python main.py --flows 1000 --lambda_param 2025 --rho 2125 --sigma 10 --fixed_rate 260000000
